@@ -1,0 +1,9 @@
+## Interface: 60000
+## Author: Kesava
+## Title: Kui |cff9966ffUnitFrames|r
+## OptionalDeps: oUF_Smooth
+## RequiredDeps: oUF
+
+functions.lua
+elements.lua
+layout.lua
