@@ -10,11 +10,13 @@ local oUF = oUF
 -------------------------------------------------------------------- geometry --
 do
 	local styles = { -- sizes
-		['player'] = { 197, 25 }
+		['player'] = { 197, 15 },
+		['target'] = { 197, 25 },
 	}
 	local geometry = { -- positions
-		['player'] = { 'player', { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', -.1, -.9 }},
-		['target'] = { 'player', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
+		['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 15.1 }},
+		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 15.1 }},
+		['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
 	}
 	ns.SetFrameGeometry = function(self)
 		if geometry[self.unit] then

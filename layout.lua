@@ -4,13 +4,19 @@
 	All rights reserved
 
 	Unit factory
+
+	TODO lots of things, but make damage absorb + healing absorb elements
 ]]
 local addon,ns=...
 local oUF = oUF
 ns.frames = {}
 -------------------------------------------------- Individual unit layout --
 local function MainLayout(self, unit)
-	ns.InitFrame(self)
+	if unit == 'player' then
+		ns.CreatePlayerElements(self)
+	else
+		ns.CreateMainElements(self)
+	end
 end
 oUF:RegisterStyle("KuitwoMain", MainLayout)
 ------------------------------------------------------------ Group layout --
@@ -25,6 +31,7 @@ oUF:RegisterStyle("KuitwoRaid", RaidLayout)
 local function SpawnFrame(unit)
 	ns.frames[unit] = oUF:Spawn(unit)
 	_G['oUF_Kuitwo_'..unit] = ns.frames[unit]
+	ns.InitFrame(ns.frames[unit])
 end
 function SpawnParty()
 end
@@ -32,6 +39,8 @@ function SpawnRaid()
 end
 
 oUF:Factory(function(self)
+	oUF.colors.power['MANA'] = { 78/255, 95/255, 190/255 }
+
 	-- replace the default reaction colours
 	oUF.colors.reaction[1] = { .7, .2, .1 } -- hated
 	oUF.colors.reaction[2] = { .7, .2, .1 } -- hostile
