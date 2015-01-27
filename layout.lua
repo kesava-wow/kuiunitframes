@@ -6,6 +6,7 @@
 	Unit factory
 
 	TODO lots of things, but make damage absorb + healing absorb elements
+	also add a spark to player health/mana bar at a certain (low) value
 ]]
 local addon,ns=...
 local oUF = oUF

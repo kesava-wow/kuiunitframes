@@ -2,7 +2,7 @@
 	oUF Kui
 	Kesava-Auchindoun
 	All rights reserved
-	
+
 	Element creation functions
 ]]
 local addon,ns=...
@@ -51,6 +51,25 @@ local function CreatePowerBar(self)
 	self.Power.colorTapping = true
 	self.Power.colorPower = true
 end
+---------------------------------------------------------- generic background --
+function CreateBackground(self, frame)
+    if frame then
+        frame = CreateFrame('Frame',nil,self)
+    else
+        frame = self
+    end
+
+	frame:SetBackdrop({
+		bgFile=kui.m.t.solid,
+		edgeFile=kui.m.t.solid,
+		edgeSize=1,
+		insets={top=1,bottom=1,left=1,right=1}
+	})
+	frame:SetBackdropColor(0,0,0,.8)
+	frame:SetBackdropBorderColor(0,0,0,1)
+
+    return frame
+end
 ------------------------------------------------------------------- main base --
 function ns.CreateMainElements(self)
 	-- create frame elements
@@ -64,24 +83,17 @@ function ns.CreatePlayerElements(self)
 
 	-- power bar
 	-- create power bar background on opposite side of action buttons
-	local powerbg = CreateFrame('Frame', nil, self)
-	powerbg:SetBackdrop({
-		bgFile=kui.m.t.solid,
-		edgeFile=kui.m.t.solid,
-		edgeSize=1,
-		insets={top=1,bottom=1,left=1,right=1}
-	})
-	powerbg:SetBackdropColor(0,0,0,.8)
-	powerbg:SetBackdropBorderColor(0,0,0,1)
-	powerbg.unit = 'player_power'
+    local powerbg = CreateBackground(self, true)
+    self.powerbg = powerbg
 
-	ns.SetFrameGeometry(powerbg)
-	self.powerbg = powerbg
+    powerbg.unit = 'player_power'
+    ns.SetFrameGeometry(powerbg)
 
 	CreatePowerBar(self)
 	self.Power:SetParent(powerbg)
 	self.Power:SetPoint('TOPLEFT',1,-1)
 	self.Power:SetPoint('BOTTOMRIGHT',-1,1)
+	self.Power:SetAlpha(.7)
 end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
@@ -90,15 +102,8 @@ function ns.InitFrame(self)
 	self:SetScript('OnLeave', ns.UnitOnLeave)
 	self:RegisterForClicks('AnyUp')
 
-	-- set backdrop & border
-	self:SetBackdrop({
-		bgFile=kui.m.t.solid,
-		edgeFile=kui.m.t.solid,
-		edgeSize=1,
-		insets={top=1,bottom=1,left=1,right=1}
-	})
+	-- create backdrop & border
+    CreateBackground(self)
 	self:SetBackdropColor(0,0,0,.2)
-	self:SetBackdropBorderColor(0,0,0,1)
-
 	ns.SetFrameGeometry(self)
 end
