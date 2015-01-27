@@ -94,6 +94,14 @@ function ns.CreatePlayerElements(self)
 	self.Power:SetPoint('TOPLEFT',1,-1)
 	self.Power:SetPoint('BOTTOMRIGHT',-1,1)
 	self.Power:SetAlpha(.7)
+
+    -- class bars container
+    self.ClassBars = {
+        class = select(2,UnitClass('PLAYER')),
+        width = 197,
+        height = 6,
+        point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
+    }
 end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
