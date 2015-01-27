@@ -7,3 +7,5 @@
 functions.lua
 elements.lua
 layout.lua
+
+plugins/CLassBars.lua
