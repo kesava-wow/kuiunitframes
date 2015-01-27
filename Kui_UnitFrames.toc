@@ -4,8 +4,10 @@
 ## OptionalDeps: oUF_Smooth
 ## RequiredDeps: oUF
 
+lib\embeds.xml
+
 functions.lua
 elements.lua
 layout.lua
 
-plugins/CLassBars.lua
+plugins\ClassBars.lua
