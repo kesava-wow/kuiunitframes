@@ -131,7 +131,12 @@ end
 -- must be used as update.f
 local function UpdateGeneric(self, event, ...)
 	local visible, curr = 0
-	curr = UnitPower('player', cb.type)
+    if cb.type then
+        curr = UnitPower(self.unit, cb.type)
+    else
+        -- event-driven power; cannot be fetched with UnitPower
+        curr = cb.event_function(self.unit)
+    end
 
 	for k, bar in ipairs(cb.bars) do
 		if curr >= k then
@@ -344,7 +349,8 @@ end
 local function Update(self, event, ...)
 	if event == 'UNIT_POWER' or
 	   event == 'UNIT_POWER_FREQUENT' or
-	   event == 'UNIT_AURA'
+	   event == 'UNIT_AURA' or
+       event == 'UNIT_COMBO_POINTS'
 	then
 		local unit = ...
 		if unit ~= self.unit then return end
@@ -565,7 +571,8 @@ local function Enable(self, unit)
 
 	if cb.class ~= "SHAMAN" and cb.class ~= "DEATHKNIGHT" and
 	   cb.class ~= "DRUID" and cb.class ~= "PALADIN" and
-	   cb.class ~= "WARLOCK" and cb.class ~= "MONK" and cb.class ~= 'PRIEST'
+	   cb.class ~= "WARLOCK" and cb.class ~= "MONK" and cb.class ~= 'PRIEST' and
+       cb.class ~= 'ROGUE'
 	then
 		cb = nil
 		return
@@ -709,6 +716,17 @@ local function Enable(self, unit)
 
 		cb.o.events = { 'UNIT_POWER' }
 		cb.o.update = { ['f'] = UpdateGeneric }
+---------------------------------------------------------------- combo points --
+    elseif cb.class == 'ROGUE' then
+        cb.o.bars   = { {},{},{},{},{} }
+        cb.o.events = { 'UNIT_COMBO_POINTS' }
+        cb.o.colour = { 1,1,.1 }
+
+        cb.o.update = { ['f'] = UpdateGeneric }
+
+        cb.event_function = function()
+            return GetComboPoints('player','target')
+        end
 	end
 
 	self:RegisterEvent('PLAYER_ENTERING_WORLD', Update)
