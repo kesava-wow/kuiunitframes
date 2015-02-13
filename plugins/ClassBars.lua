@@ -147,6 +147,37 @@ local function UpdateGeneric(self, event, ...)
 		end
 	end
 end
+----------------------------------- Update combo points + anticipation stacks --
+local function UpdateComboPoints(self, event, ...)
+	if event == 'PLAYER_TALENT_UPDATE' or event == 'PLAYER_ENTERING_WORLD' then
+		cb.ANTICIPATION_IS_KNOWN = IsSpellKnown(cb.ANTICIPATION_TALENT_ID)
+
+		if cb.ANTICIPATION_IS_KNOWN then
+			cb.container:RegisterEvent('UNIT_AURA')
+		else
+			cb.container:UnregisterEvent('UNIT_AURA')
+		end
+	elseif event == 'UNIT_AURA' then
+		-- update anticipation
+		if ... ~= 'player' then return end
+		local stacks = select(4,UnitBuff('player',cb.ANTICIPATION_NAME))
+
+		if stacks or cb.anticipationWasActive then
+			-- change individual bar colours for anticipation
+			for k, bar in ipairs(cb.bars) do
+				if stacks and k <= stacks then
+					bar:SetStatusBarColor(1,.3,.3)
+				else
+					bar:SetStatusBarColor(unpack(cb.o.colour))
+				end
+			end
+		end
+
+		cb.anticipationWasActive = stacks ~= nil
+	end
+
+	UpdateGeneric(self,event,...)
+end
 ----------------------------------------------------------- Update Totem Bars --
 local function UpdateShamanBar(self, bar)
 	local haveTotem, totemName, startTime, duration = GetTotemInfo(bar.id)
@@ -468,9 +499,8 @@ local function CreateBars(self)
 		bg:SetHeight(cb.height)
 	end
 
-	-- register events
+	-- register container events
 	for k, e in pairs(cb.o.events) do
-		--self:RegisterEvent(e, Update) -- TODO TEMP WORKAROUND FOR OUF BUG (possibly)
 		cb.container:RegisterEvent(e)
 	end
 
@@ -604,7 +634,6 @@ local function Enable(self, unit)
 		cb.container:SetPoint(unpack(cb.point))
 	--end
 
-	-- TODO TEMP WORKAROUND FOR OUF BUG (possibly)
 	cb.container:SetScript('OnEvent', function(_, event, ...)
 		Update(self, event, ...)
 	end)
@@ -719,14 +748,18 @@ local function Enable(self, unit)
 ---------------------------------------------------------------- combo points --
     elseif cb.class == 'ROGUE' then
         cb.o.bars   = { {},{},{},{},{} }
-        cb.o.events = { 'UNIT_COMBO_POINTS' }
+        cb.o.events = { 'UNIT_COMBO_POINTS', 'PLAYER_TALENT_UPDATE' }
         cb.o.colour = { 1,1,.1 }
 
-        cb.o.update = { ['f'] = UpdateGeneric }
+        cb.o.update = { ['f'] = UpdateComboPoints }
 
         cb.event_function = function()
             return GetComboPoints('player','target')
         end
+
+        cb.ANTICIPATION_TALENT_ID = 114015
+        cb.ANTICIPATION_SPELL_ID = 115189
+        cb.ANTICIPATION_NAME = GetSpellInfo(cb.ANTICIPATION_SPELL_ID) or 'Anticipation'
 	end
 
 	self:RegisterEvent('PLAYER_ENTERING_WORLD', Update)
