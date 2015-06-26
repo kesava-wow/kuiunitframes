@@ -7,6 +7,7 @@
 ]]
 local addon,ns=...
 local oUF = oUF
+local kui = LibStub('Kui-1.0')
 ------------------------------------------------------------------ health bar --
 local function CreateHealthBar(self)
 	self.Health = ns.CreateStatusBar(self)
@@ -51,8 +52,31 @@ local function CreatePowerBar(self)
 	self.Power.colorTapping = true
 	self.Power.colorPower = true
 end
+------------------------------------------------------------------------ text --
+local function CreateHealthText(self)
+    local hp = self:CreateFontString(nil,'OVERLAY')
+    hp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
+    hp:SetShadowOffset(1,-1)
+    hp:SetShadowColor(0,0,0,.5)
+
+    ns.SetTextGeometry(self,hp,'health')
+
+    self.hp = hp
+    self:Tag(self.hp,'[kui:hp]')
+end
+local function CreateNameText(self)
+    local name = self:CreateFontString(nil,'OVERLAY')
+    name:SetFont(kui.m.f.francois, 11, 'THINOUTLINE')
+    name:SetShadowOffset(1,-1)
+    name:SetShadowColor(0,0,0,.5)
+
+    ns.SetTextGeometry(self,name,'name')
+
+    self.name = name
+    self:Tag(self.name,'[name]')
+end
 ---------------------------------------------------------- generic background --
-function CreateBackground(self, frame)
+local function CreateBackground(self, frame)
     if frame then
         frame = CreateFrame('Frame',nil,self)
     else
@@ -75,6 +99,10 @@ function ns.CreateMainElements(self)
 	-- create frame elements
 	CreateHealthBar(self)
 	CreatePortrait(self)
+
+    -- text
+    CreateHealthText(self)
+    CreateNameText(self)
 end
 ----------------------------------------------------------------- player base --
 function ns.CreatePlayerElements(self)

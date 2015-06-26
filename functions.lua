@@ -18,6 +18,15 @@ do
 		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 15.1 }},
 		['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
 	}
+
+    local SetPoint = function(frame,point_tbl)
+        if type(point_tbl[2]) == 'string' then
+            point_tbl[2] = _G[point_tbl[2]]
+        end
+
+        frame:SetPoint(unpack(point_tbl))
+    end
+
 	ns.SetFrameGeometry = function(self)
 		if geometry[self.unit] then
 			local geotable = geometry[self.unit]
@@ -30,19 +39,51 @@ do
 			end
 
 			if point then
-				if type(point[2]) == 'string' then
-					point[2] = _G[point[2]]
-				end
-
-				self:ClearAllPoints()
-				self:SetPoint(unpack(point))
+                self:ClearAllPoints()
+                SetPoint(self,point)
 			end
 
 			if relpoint then
-				self:SetPoint(unpack(relpoint))
+                SetPoint(self,relpoint)
 			end
 		end
 	end
+
+    local text_geo = {
+        ['default'] = {
+            ['name'] = { 'LEFT',  5, -1 },
+            ['health'] = { 'RIGHT', -5, 0 },
+        }
+    }
+
+    ns.SetTextGeometry = function(frame,text,geokey,rel)
+        local geotable
+        if frame.unit and text_geo[frame.unit] and text_geo[frame.unit][geokey] then
+            geotable = text_geo[frame.unit][geokey]
+        else
+            if text_geo['default'][geokey] then
+                geotable = text_geo['default'][geokey]
+            else
+                return
+            end
+        end
+
+        local point,relpoint
+
+        if type(geotable[1]) == 'table' then
+            point = geotable[1]
+            relpoint = geotable[2]
+        else
+            point = geotable
+        end
+
+        text:ClearAllPoints()
+        SetPoint(text,point)
+
+        if relpoint then
+            SetPoint(text,relpoint,frame)
+        end
+    end
 end
 --------------------------------------------------------------- dropdown menu --
 do

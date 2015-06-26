@@ -1,15 +1,16 @@
 --[[
-	oUF Kui
+	Kui Unit Frames
 	Kesava-Auchindoun
 	All rights reserved
 
 	Unit factory
 
-	TODO lots of things, but make damage absorb + healing absorb elements
-	also add a spark to player health/mana bar at a certain (low) value
+    Ideas:
+	add a spark to player health/mana bar at a certain (low) value
 ]]
 local addon,ns=...
 local oUF = oUF
+local kui = LibStub('Kui-1.0')
 ns.frames = {}
 -------------------------------------------------- Individual unit layout --
 local function MainLayout(self, unit)
@@ -20,23 +21,11 @@ local function MainLayout(self, unit)
 	end
 end
 oUF:RegisterStyle("KuitwoMain", MainLayout)
------------------------------------------------------------- Group layout --
-local function GroupLayout(self, unit)
-end
-oUF:RegisterStyle("KuitwoGroup", GroupLayout)
-------------------------------------------------------------- Raid layout --
-local function RaidLayout(self, unit)
-end
-oUF:RegisterStyle("KuitwoRaid", RaidLayout)
 ------------------------------------------------------------- Arbitrary stuff --
 local function SpawnFrame(unit)
 	ns.frames[unit] = oUF:Spawn(unit)
 	_G['oUF_Kuitwo_'..unit] = ns.frames[unit]
 	ns.InitFrame(ns.frames[unit])
-end
-function SpawnParty()
-end
-function SpawnRaid()
 end
 
 oUF:Factory(function(self)
@@ -52,6 +41,26 @@ oUF:Factory(function(self)
 	oUF.colors.reaction[7] = { .3, .8, .4 } -- revered
 	oUF.colors.reaction[8] = { .3, .9, .6 } -- exalted
 
+    -- add ouf tags
+    oUF.Tags.Methods['kui:hp'] = function(u,r)
+        local m = UnitHealthMax(u)
+        local c = UnitHealth(u)
+
+        if c == m or c == 0 or m == 0 then
+            return
+        elseif UnitIsFriend('player',u) then
+            return '-'..kui.num(m-c)
+        else
+            local p = c / m * 100
+            if p < 1 then
+                return string.format('%.1f', p)
+            else
+                return math.ceil(p)
+            end
+        end
+    end
+    oUF.Tags.Events['kui:hp'] = 'UNIT_MAXHEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION'
+
 	-- Spawn individual units ----------------------------------------------
 	self:SetActiveStyle("KuitwoMain")
 	SpawnFrame('player')
@@ -61,12 +70,4 @@ oUF:Factory(function(self)
 	SpawnFrame('targettarget')
 	SpawnFrame('focus')
 	SpawnFrame('focustarget')
-
-	-- Spawn group style units ---------------------------------------------
-	self:SetActiveStyle("KuitwoGroup")
-	SpawnParty()
-
-	-- Spawn raid style units ----------------------------------------------
-	self:SetActiveStyle("KuitwoRaid")
-	SpawnRaid()
 end)
