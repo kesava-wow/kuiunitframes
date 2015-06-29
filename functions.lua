@@ -12,11 +12,13 @@ do
 	local styles = { -- sizes
 		['player'] = { 197, 16 },
 		['target'] = { 197, 25 },
+        ['targettarget'] = { 100, 16 }
 	}
 	local geometry = { -- positions
 		['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
 		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
 		['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
+        ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
 	}
 
     local SetPoint = function(frame,point_tbl)

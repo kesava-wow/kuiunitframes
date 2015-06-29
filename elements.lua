@@ -189,13 +189,13 @@ local function CreateBackground(self, frame)
 end
 ------------------------------------------------------------------- main base --
 function ns.CreateMainElements(self)
-	-- create frame elements
 	CreateHealthBar(self)
-	CreatePortrait(self)
-
-    -- text
-    CreateHealthText(self)
+    CreatePortrait(self)
     CreateNameText(self)
+
+    if self.unit ~= 'targettarget' then
+        CreateHealthText(self)
+    end
 end
 ----------------------------------------------------------------- player base --
 function ns.CreatePlayerElements(self)

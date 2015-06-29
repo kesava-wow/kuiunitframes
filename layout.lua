@@ -4,9 +4,6 @@
 	All rights reserved
 
 	Unit factory
-
-    Ideas:
-	add a spark to player health/mana bar at a certain (low) value
 ]]
 local addon,ns=...
 local oUF = oUF
