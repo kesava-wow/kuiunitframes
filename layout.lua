@@ -60,6 +60,10 @@ oUF:Factory(function(self)
         end
     end
     oUF.Tags.Events['kui:hp'] = 'UNIT_MAXHEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION'
+    oUF.Tags.Methods['kui:pp'] = function(u,r)
+        return kui.num(UnitPower(u or r))
+    end
+    oUF.Tags.Events['kui:pp'] = 'UNIT_POWER UNIT_POWER_FREQUENT'
 
 	-- Spawn individual units ----------------------------------------------
 	self:SetActiveStyle("KuitwoMain")

@@ -26,6 +26,29 @@ local function FadeSpark(self)
     end
 end
 
+local function CreateStatusBarSpark(bar)
+    local texture = bar:GetStatusBarTexture()
+    local spark = bar:CreateTexture(nil,'OVERLAY')
+    spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
+    spark:SetWidth(8)
+
+    local r,g,b = bar:GetStatusBarColor()
+    spark:SetVertexColor(r+.5,g+.5,b+.5)
+
+    if bar.reverser then
+        spark:SetPoint('TOP', texture, 'TOPLEFT', 1, 4)
+        spark:SetPoint('BOTTOM', texture, 'BOTTOMLEFT', 1, -4)
+    else
+        spark:SetPoint('TOP', texture, 'TOPRIGHT', -1, 4)
+        spark:SetPoint('BOTTOM', texture, 'BOTTOMRIGHT', -1, -4)
+    end
+
+    bar.spark = spark
+
+    bar:HookScript('OnValueChanged',FadeSpark)
+    bar:HookScript('OnMinMaxChanged',FadeSpark)
+end
+
 ------------------------------------------------------------------ health bar --
 local function CreateHealthBar(self)
 	self.Health = ns.CreateStatusBar(self)
@@ -38,18 +61,7 @@ local function CreateHealthBar(self)
 
     if self.unit == 'player' then
         -- also make spark
-        local texture = self.Health:GetStatusBarTexture()
-        local spark = self.Health:CreateTexture(nil,'OVERLAY')
-        spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
-        spark:SetVertexColor(1,.5,.5)
-        spark:SetPoint('TOP', texture, 'TOPRIGHT', -1, 4)
-        spark:SetPoint('BOTTOM', texture, 'BOTTOMRIGHT', -1, -4)
-        spark:SetWidth(8)
-
-        self.Health.spark = spark
-
-        self.Health:HookScript('OnValueChanged',FadeSpark)
-        self.Health:HookScript('OnMinMaxChanged',FadeSpark)
+        CreateStatusBarSpark(self.Health)
 	else
 		self.Health.colorReaction = true
 		self.Health.colorClass = true
@@ -93,8 +105,39 @@ local function CreatePowerBar(self)
 
         pp:SetPoint('LEFT',self.Power,5,0)
 
-        self.pp = pp
-        self:Tag(self.pp,'[curpp]')
+        self:Tag(pp,'[kui:pp]')
+        self.Power.text = pp
+
+        -- reverse player power bar
+        local bar = self.Power
+        local function OnUpdateReverser(self)
+            local tex = self.__owner:GetStatusBarTexture()
+            local max,width,val =
+                select(2, self.__owner:GetMinMaxValues()),
+                self.__owner:GetWidth(),
+                self.__owner:GetValue()
+
+            tex:ClearAllPoints()
+            tex:SetPoint('BOTTOMRIGHT')
+            tex:SetPoint('TOPLEFT', self.__owner, 'TOPRIGHT', -((val/max)*width),0)
+
+            self:Hide()
+        end
+        local function OnChange(self)
+            self.reverser:Show()
+        end
+
+        bar.reverser = CreateFrame('Frame',nil,bar)
+        bar.reverser:Hide()
+        bar.reverser:SetScript('OnUpdate',OnUpdateReverser)
+        bar.reverser.__owner = bar
+
+        bar:HookScript('OnSizeChanged',OnChange)
+        bar:HookScript('OnValueChanged',OnChange)
+        bar:HookScript('OnMinMaxChanged',OnChange)
+
+        -- add spark
+        CreateStatusBarSpark(self.Power)
     end
 end
 ------------------------------------------------------------------------ text --
