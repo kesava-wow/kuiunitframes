@@ -10,12 +10,12 @@ local oUF = oUF
 -------------------------------------------------------------------- geometry --
 do
 	local styles = { -- sizes
-		['player'] = { 197, 15 },
+		['player'] = { 197, 16 },
 		['target'] = { 197, 25 },
 	}
 	local geometry = { -- positions
-		['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 15.1 }},
-		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 15.1 }},
+		['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
+		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
 		['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
 	}
 
@@ -51,7 +51,7 @@ do
 
     local text_geo = {
         ['default'] = {
-            ['name'] = { 'LEFT',  5, -1 },
+            ['name'] = { 'TOP',  0, 5 },
             ['health'] = { 'RIGHT', -5, 0 },
         }
     }

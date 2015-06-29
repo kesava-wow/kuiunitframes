@@ -8,6 +8,24 @@
 local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
+
+local function FadeSpark(self)
+    local min,max = self:GetMinMaxValues()
+    local val = self:GetValue()
+    local show_val = (max / 100) * 80
+    if val == max then
+        self.text:SetAlpha(0)
+        self.spark:SetAlpha(0)
+    elseif val < show_val then
+        self.text:SetAlpha(1)
+        self.spark:SetAlpha(1)
+    else
+        local alpha = 1 - ((val - show_val) / (max - show_val))
+        self.text:SetAlpha(alpha)
+        self.spark:SetAlpha(alpha)
+    end
+end
+
 ------------------------------------------------------------------ health bar --
 local function CreateHealthBar(self)
 	self.Health = ns.CreateStatusBar(self)
@@ -18,7 +36,21 @@ local function CreateHealthBar(self)
 	self.Health.frequentUpdates = true
 	self.Health.Smooth = true
 
-	if self.unit ~= 'player' then
+    if self.unit == 'player' then
+        -- also make spark
+        local texture = self.Health:GetStatusBarTexture()
+        local spark = self.Health:CreateTexture(nil,'OVERLAY')
+        spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
+        spark:SetVertexColor(1,.5,.5)
+        spark:SetPoint('TOP', texture, 'TOPRIGHT', -1, 4)
+        spark:SetPoint('BOTTOM', texture, 'BOTTOMRIGHT', -1, -4)
+        spark:SetWidth(8)
+
+        self.Health.spark = spark
+
+        self.Health:HookScript('OnValueChanged',FadeSpark)
+        self.Health:HookScript('OnMinMaxChanged',FadeSpark)
+	else
 		self.Health.colorReaction = true
 		self.Health.colorClass = true
 		self.Health.colorDisconnected = true
@@ -51,6 +83,19 @@ local function CreatePowerBar(self)
 	self.Power.colorDisconnected = true
 	self.Power.colorTapping = true
 	self.Power.colorPower = true
+
+    if self.unit == 'player' then
+        -- power text
+        local pp = self.Power:CreateFontString(nil,'OVERLAY')
+        pp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
+        pp:SetShadowOffset(1,-1)
+        pp:SetShadowColor(0,0,0,.5)
+
+        pp:SetPoint('LEFT',self.Power,5,0)
+
+        self.pp = pp
+        self:Tag(self.pp,'[curpp]')
+    end
 end
 ------------------------------------------------------------------------ text --
 local function CreateHealthText(self)
@@ -59,7 +104,12 @@ local function CreateHealthText(self)
     hp:SetShadowOffset(1,-1)
     hp:SetShadowColor(0,0,0,.5)
 
-    ns.SetTextGeometry(self,hp,'health')
+    if self.unit == 'player' then
+        self.Health.text = hp
+        hp:SetPoint('RIGHT',-5,0)
+    else
+        ns.SetTextGeometry(self,hp,'health')
+    end
 
     self.hp = hp
     self:Tag(self.hp,'[kui:hp]')
@@ -108,6 +158,8 @@ end
 function ns.CreatePlayerElements(self)
 	CreateHealthBar(self)
 	CreatePortrait(self)
+
+    CreateHealthText(self)
 
 	-- power bar
 	-- create power bar background on opposite side of action buttons
