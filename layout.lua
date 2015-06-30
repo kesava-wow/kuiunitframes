@@ -57,6 +57,13 @@ oUF:Factory(function(self)
         end
     end
     oUF.Tags.Events['kui:hp'] = 'UNIT_MAXHEALTH UNIT_HEALTH_FREQUENT UNIT_CONNECTION'
+    oUF.Tags.Methods['kui:curhp'] = function(u,r)
+        local c = UnitHealth(u or r)
+        if c > 0 then
+            return kui.num(c)
+        end
+    end
+    oUF.Tags.Events['kui:curhp'] = 'UNIT_HEALTH_FREQUENT'
     oUF.Tags.Methods['kui:pp'] = function(u,r)
         return kui.num(UnitPower(u or r))
     end

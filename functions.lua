@@ -55,6 +55,7 @@ do
         ['default'] = {
             ['name'] = { 'TOP',  0, 5 },
             ['health'] = { 'RIGHT', -5, 0 },
+            ['curhp'] = { 'LEFT', 5, 0 },
         }
     }
 
@@ -140,7 +141,7 @@ do
 
 	ns.CreateStatusBar = function(parent)
 		local bar = CreateFrame('StatusBar',nil,parent)
-		bar:SetStatusBarTexture(texture)
+		bar:SetStatusBarTexture(texture,'BACKGROUND')
 
 		bar.bg = bar:CreateTexture(nil,'BACKGROUND')
 		bar.bg:SetTexture(texture)

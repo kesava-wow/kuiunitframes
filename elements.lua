@@ -98,7 +98,7 @@ local function CreatePowerBar(self)
 
     if self.unit == 'player' then
         -- power text
-        local pp = self.Power:CreateFontString(nil,'OVERLAY')
+        local pp = self:CreateFontString(nil,'OVERLAY')
         pp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
         pp:SetShadowOffset(1,-1)
         pp:SetShadowColor(0,0,0,.5)
@@ -154,6 +154,18 @@ local function CreateHealthText(self)
         ns.SetTextGeometry(self,hp,'health')
     end
 
+    if self.unit == 'target' then
+        local curhp = self:CreateFontString(nil,'OVERLAY')
+        curhp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
+        curhp:SetShadowOffset(1,-1)
+        curhp:SetShadowColor(0,0,0,.5)
+
+        ns.SetTextGeometry(self,curhp,'curhp')
+
+        self.Health.curhp = curhp
+        self:Tag(curhp,'[kui:curhp]')
+    end
+
     self.hp = hp
     self:Tag(self.hp,'[kui:hp]')
 end
@@ -207,16 +219,17 @@ function ns.CreatePlayerElements(self)
 	-- power bar
 	-- create power bar background on opposite side of action buttons
     local powerbg = CreateBackground(self, true)
+    powerbg:SetFrameLevel(1)
     self.powerbg = powerbg
 
     powerbg.unit = 'player_power'
     ns.SetFrameGeometry(powerbg)
 
 	CreatePowerBar(self)
-	self.Power:SetParent(powerbg)
-	self.Power:SetPoint('TOPLEFT',1,-1)
-	self.Power:SetPoint('BOTTOMRIGHT',-1,1)
-	self.Power:SetAlpha(.7)
+    self.Power:SetFrameLevel(2)
+	self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
+	self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
+    self.Power:SetAlpha(.7)
 
     -- class bars container
     self.ClassBars = {
