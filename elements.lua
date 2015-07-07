@@ -18,8 +18,14 @@ local function FadeSpark(self)
         self.spark:SetAlpha(0)
     elseif val < show_val then
         self.text:SetAlpha(1)
-        self.spark:SetAlpha(1)
+
+        if val == 0 then
+            self.spark:SetAlpha(0)
+        else
+            self.spark:SetAlpha(1)
+        end
     else
+        -- fade text and spark depending on value
         local alpha = 1 - ((val - show_val) / (max - show_val))
         self.text:SetAlpha(alpha)
         self.spark:SetAlpha(alpha)
