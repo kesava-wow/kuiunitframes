@@ -30,8 +30,9 @@ do
     end
 
 	ns.SetFrameGeometry = function(self)
-		if geometry[self.unit] then
-			local geotable = geometry[self.unit]
+        local geotable = self.framekey and geometry[self.framekey] or geometry[self.unit]
+
+		if geotable then
 			local style = geotable[1]
 			local point = geotable[2]
 			local relpoint = geotable[3]
@@ -56,6 +57,9 @@ do
             ['name'] = { 'TOP',  0, 5 },
             ['health'] = { 'RIGHT', -5, 0 },
             ['curhp'] = { 'LEFT', 5, 0 },
+        },
+        ['targettarget'] = {
+            ['name'] = { 'TOP', 0, 2 }
         }
     }
 

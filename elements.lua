@@ -229,7 +229,7 @@ local function CreatePlayerElements(self)
     CreateGlow(powerbg)
     self.powerbg = powerbg
 
-    powerbg.unit = 'player_power'
+    powerbg.framekey = 'player_power'
     ns.SetFrameGeometry(powerbg)
 
     CreatePowerBar(self)
