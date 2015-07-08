@@ -11,11 +11,7 @@ local kui = LibStub('Kui-1.0')
 ns.frames = {}
 -------------------------------------------------- Individual unit layout --
 local function MainLayout(self, unit)
-	if unit == 'player' then
-		ns.CreatePlayerElements(self)
-	else
-		ns.CreateMainElements(self)
-	end
+    ns.CreateMainElements(self)
 end
 oUF:RegisterStyle("KuitwoMain", MainLayout)
 ------------------------------------------------------------- Arbitrary stuff --

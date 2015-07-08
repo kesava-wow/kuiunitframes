@@ -9,6 +9,8 @@ local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
 
+local FRAME_LEVEL_OFFSET = 0
+
 local function FadeSpark(self)
     local min,max = self:GetMinMaxValues()
     local val = self:GetValue()
@@ -39,7 +41,7 @@ local function CreateStatusBarSpark(bar)
     spark:SetWidth(8)
 
     local r,g,b = bar:GetStatusBarColor()
-    spark:SetVertexColor(r+.5,g+.5,b+.5)
+    spark:SetVertexColor(r+.3,g+.3,b+.3)
 
     if bar.reverser then
         spark:SetPoint('TOP', texture, 'TOPLEFT', 1, 4)
@@ -104,7 +106,7 @@ local function CreatePowerBar(self)
 
     if self.unit == 'player' then
         -- power text
-        local pp = self:CreateFontString(nil,'OVERLAY')
+        local pp = self.overlay:CreateFontString(nil,'OVERLAY')
         pp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
         pp:SetShadowOffset(1,-1)
         pp:SetShadowColor(0,0,0,.5)
@@ -144,11 +146,16 @@ local function CreatePowerBar(self)
 
         -- add spark
         CreateStatusBarSpark(self.Power)
+
+        self.Power.PostUpdate = function(self)
+            local r,g,b = self:GetStatusBarColor()
+            self.spark:SetVertexColor(r+.3,g+.3,b+.3)
+        end
     end
 end
 ------------------------------------------------------------------------ text --
 local function CreateHealthText(self)
-    local hp = self:CreateFontString(nil,'OVERLAY')
+    local hp = self.overlay:CreateFontString(nil,'OVERLAY')
     hp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
     hp:SetShadowOffset(1,-1)
     hp:SetShadowColor(0,0,0,.5)
@@ -161,7 +168,7 @@ local function CreateHealthText(self)
     end
 
     if self.unit == 'target' then
-        local curhp = self:CreateFontString(nil,'OVERLAY')
+        local curhp = self.overlay:CreateFontString(nil,'OVERLAY')
         curhp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
         curhp:SetShadowOffset(1,-1)
         curhp:SetShadowColor(0,0,0,.5)
@@ -176,7 +183,7 @@ local function CreateHealthText(self)
     self:Tag(self.hp,'[kui:hp]')
 end
 local function CreateNameText(self)
-    local name = self:CreateFontString(nil,'OVERLAY')
+    local name = self.overlay:CreateFontString(nil,'OVERLAY')
     name:SetFont(kui.m.f.francois, 11, 'THINOUTLINE')
     name:SetShadowOffset(1,-1)
     name:SetShadowColor(0,0,0,.5)
@@ -185,6 +192,19 @@ local function CreateNameText(self)
 
     self.name = name
     self:Tag(self.name,'[name]')
+end
+------------------------------------------------------------------ frame glow --
+local function CreateGlow(self)
+    local glow = CreateFrame('Frame',nil,self)
+    glow:SetPoint('TOPLEFT', -5, 5)
+    glow:SetPoint('BOTTOMRIGHT', 5, -5)
+    glow:SetBackdrop({
+        edgeFile=kui.m.t.shadow,
+        edgeSize=5
+    })
+    glow:SetBackdropBorderColor(0,0,0,.3)
+
+    self.glow = glow
 end
 ---------------------------------------------------------- generic background --
 local function CreateBackground(self, frame)
@@ -207,43 +227,43 @@ local function CreateBackground(self, frame)
 end
 ------------------------------------------------------------------- main base --
 function ns.CreateMainElements(self)
+    -- create overlay for text/high textures
+    self.overlay = CreateFrame('Frame',nil,self)
+    self.overlay:SetFrameLevel(7)
+    self.overlay:SetAllPoints(self)
+
 	CreateHealthBar(self)
     CreatePortrait(self)
-    CreateNameText(self)
 
     if self.unit ~= 'targettarget' then
         CreateHealthText(self)
     end
-end
------------------------------------------------------------------ player base --
-function ns.CreatePlayerElements(self)
-	CreateHealthBar(self)
-	CreatePortrait(self)
 
-    CreateHealthText(self)
+    if self.unit == 'player' then
+        -- create power bar background on opposite side of action buttons
+        local powerbg = CreateBackground(self, true)
+        CreateGlow(powerbg)
+        self.powerbg = powerbg
 
-	-- power bar
-	-- create power bar background on opposite side of action buttons
-    local powerbg = CreateBackground(self, true)
-    powerbg:SetFrameLevel(1)
-    self.powerbg = powerbg
+        powerbg.unit = 'player_power'
+        ns.SetFrameGeometry(powerbg)
 
-    powerbg.unit = 'player_power'
-    ns.SetFrameGeometry(powerbg)
+        CreatePowerBar(self)
+        self.Power:SetFrameLevel(powerbg:GetFrameLevel()+1)
+        self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
+        self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
+        self.Power:SetAlpha(.7)
 
-	CreatePowerBar(self)
-    self.Power:SetFrameLevel(2)
-	self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
-	self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
-    self.Power:SetAlpha(.7)
-
-    -- class bars container
-    self.ClassBars = {
-        class = select(2,UnitClass('PLAYER')),
-        width = 197,
-        height = 6,
-        point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
-    }
+        -- class bars container
+        self.ClassBars = {
+            class = select(2,UnitClass('PLAYER')),
+            width = 197,
+            height = 6,
+            point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
+        }
+    else
+        CreateNameText(self)
+    end
 end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
@@ -255,5 +275,8 @@ function ns.InitFrame(self)
 	-- create backdrop & border
     CreateBackground(self)
 	self:SetBackdropColor(0,0,0,.2)
+
+    CreateGlow(self)
+
 	ns.SetFrameGeometry(self)
 end
