@@ -223,6 +223,29 @@ local function CreateBackground(self, frame)
     return frame
 end
 ------------------------------------------------------------------- main base --
+local function CreatePlayerElements(self)
+    -- create power bar background on opposite side of action buttons
+    local powerbg = CreateBackground(self, true)
+    CreateGlow(powerbg)
+    self.powerbg = powerbg
+
+    powerbg.unit = 'player_power'
+    ns.SetFrameGeometry(powerbg)
+
+    CreatePowerBar(self)
+    self.Power:SetFrameLevel(powerbg:GetFrameLevel()+1)
+    self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
+    self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
+    self.Power:SetAlpha(.7)
+
+    -- class bars container
+    self.ClassBars = {
+        class = select(2,UnitClass('PLAYER')),
+        width = 197,
+        height = 6,
+        point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
+    }
+end
 function ns.CreateMainElements(self)
     -- create overlay for text/high textures
     self.overlay = CreateFrame('Frame',nil,self)
@@ -237,27 +260,7 @@ function ns.CreateMainElements(self)
     end
 
     if self.unit == 'player' then
-        -- create power bar background on opposite side of action buttons
-        local powerbg = CreateBackground(self, true)
-        CreateGlow(powerbg)
-        self.powerbg = powerbg
-
-        powerbg.unit = 'player_power'
-        ns.SetFrameGeometry(powerbg)
-
-        CreatePowerBar(self)
-        self.Power:SetFrameLevel(powerbg:GetFrameLevel()+1)
-        self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
-        self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
-        self.Power:SetAlpha(.7)
-
-        -- class bars container
-        self.ClassBars = {
-            class = select(2,UnitClass('PLAYER')),
-            width = 197,
-            height = 6,
-            point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
-        }
+        CreatePlayerElements(self)
     else
         CreateNameText(self)
     end
