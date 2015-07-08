@@ -18,6 +18,7 @@ local function FadeSpark(self)
     if val == max then
         self.text:SetAlpha(0)
         self.spark:SetAlpha(0)
+        return
     elseif val < show_val then
         self.text:SetAlpha(1)
 
@@ -32,6 +33,10 @@ local function FadeSpark(self)
         self.text:SetAlpha(alpha)
         self.spark:SetAlpha(alpha)
     end
+
+    -- also update spark colour to match the bar
+    local r,g,b = self:GetStatusBarColor()
+    self.spark:SetVertexColor(r+.3,g+.3,b+.3)
 end
 
 local function CreateStatusBarSpark(bar)
@@ -39,9 +44,6 @@ local function CreateStatusBarSpark(bar)
     local spark = bar:CreateTexture(nil,'OVERLAY')
     spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
     spark:SetWidth(8)
-
-    local r,g,b = bar:GetStatusBarColor()
-    spark:SetVertexColor(r+.3,g+.3,b+.3)
 
     if bar.reverser then
         spark:SetPoint('TOP', texture, 'TOPLEFT', 1, 4)
@@ -146,11 +148,6 @@ local function CreatePowerBar(self)
 
         -- add spark
         CreateStatusBarSpark(self.Power)
-
-        self.Power.PostUpdate = function(self)
-            local r,g,b = self:GetStatusBarColor()
-            self.spark:SetVertexColor(r+.3,g+.3,b+.3)
-        end
     end
 end
 ------------------------------------------------------------------------ text --
