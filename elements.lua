@@ -151,20 +151,17 @@ end
 ------------------------------------------------------------------------ text --
 local function CreateHealthText(self)
     local hp = self.overlay:CreateFontString(nil,'OVERLAY')
-    hp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
     hp:SetShadowOffset(1,-1)
     hp:SetShadowColor(0,0,0,.5)
 
     if self.unit == 'player' then
         self.Health.text = hp
-        hp:SetPoint('RIGHT',-5,0)
-    else
-        ns.SetTextGeometry(self,hp,'health')
     end
+
+    ns.SetTextGeometry(self,hp,'health')
 
     if self.unit == 'target' then
         local curhp = self.overlay:CreateFontString(nil,'OVERLAY')
-        curhp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
         curhp:SetShadowOffset(1,-1)
         curhp:SetShadowColor(0,0,0,.5)
 
@@ -179,7 +176,6 @@ local function CreateHealthText(self)
 end
 local function CreateNameText(self)
     local name = self.overlay:CreateFontString(nil,'OVERLAY')
-    name:SetFont(kui.m.f.francois, 11, 'THINOUTLINE')
     name:SetShadowOffset(1,-1)
     name:SetShadowColor(0,0,0,.5)
 

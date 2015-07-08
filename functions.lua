@@ -7,6 +7,7 @@
 ]]
 local addon,ns=...
 local oUF = oUF
+local kui = LibStub('Kui-1.0')
 -------------------------------------------------------------------- geometry --
 do
 	local styles = { -- sizes
@@ -59,7 +60,17 @@ do
             ['curhp'] = { 'LEFT', 5, 0 },
         },
         ['targettarget'] = {
-            ['name'] = { 'TOP', 0, 2 }
+            ['name'] = { 'TOP', 0, 3 }
+        }
+    }
+    local text_font_face = kui.m.f.francois
+    local text_font_default = { 10, 'THINOUTLINE' }
+    local text_font = {
+        ['default'] = {
+            ['name'] = { 11, 'THINOUTLINE' },
+        },
+        ['targettarget'] = {
+            ['name'] = { 10, 'THINOUTLINE' }
         }
     }
 
@@ -89,6 +100,13 @@ do
 
         if relpoint then
             SetPoint(text,relpoint,frame)
+        end
+
+        -- also set font
+        if frame.unit and text_font[frame.unit] and text_font[frame.unit][geokey] then
+            text:SetFont(text_font_face, unpack(text_font[frame.unit][geokey]))
+        else
+            text:SetFont(text_font_face, unpack(text_font['default'][geokey] or text_font_default))
         end
     end
 end
