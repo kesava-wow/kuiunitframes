@@ -9,8 +9,6 @@ local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
 
-local FRAME_LEVEL_OFFSET = 0
-
 local function FadeSpark(self)
     local min,max = self:GetMinMaxValues()
     local val = self:GetValue()
