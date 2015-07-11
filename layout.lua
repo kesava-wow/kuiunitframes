@@ -1,9 +1,9 @@
 --[[
-	Kui Unit Frames
-	Kesava-Auchindoun
-	All rights reserved
+    Kui Unit Frames
+    Kesava-Auchindoun
+    All rights reserved
 
-	Unit factory
+    Unit factory
 ]]
 local addon,ns=...
 local oUF = oUF
@@ -16,23 +16,23 @@ end
 oUF:RegisterStyle("KuitwoMain", MainLayout)
 ------------------------------------------------------------- Arbitrary stuff --
 local function SpawnFrame(unit)
-	ns.frames[unit] = oUF:Spawn(unit)
-	_G['oUF_Kuitwo_'..unit] = ns.frames[unit]
-	ns.InitFrame(ns.frames[unit])
+    ns.frames[unit] = oUF:Spawn(unit)
+    _G['oUF_Kuitwo_'..unit] = ns.frames[unit]
+    ns.InitFrame(ns.frames[unit])
 end
 
 oUF:Factory(function(self)
-	oUF.colors.power['MANA'] = { 78/255, 95/255, 190/255 }
+    oUF.colors.power['MANA'] = { 78/255, 95/255, 190/255 }
 
-	-- replace the default reaction colours
-	oUF.colors.reaction[1] = { .7, .2, .1 } -- hated
-	oUF.colors.reaction[2] = { .7, .2, .1 } -- hostile
-	oUF.colors.reaction[3] = { .9, .4, .1 } -- unfriendly
-	oUF.colors.reaction[4] = { 1, .8, 0 }   -- neutral
-	oUF.colors.reaction[5] = { .2, .6, .1 } -- friendly
-	oUF.colors.reaction[6] = { .4, .8, .2 } -- honored
-	oUF.colors.reaction[7] = { .3, .8, .4 } -- revered
-	oUF.colors.reaction[8] = { .3, .9, .6 } -- exalted
+    -- replace the default reaction colours
+    oUF.colors.reaction[1] = { .7, .2, .1 } -- hated
+    oUF.colors.reaction[2] = { .7, .2, .1 } -- hostile
+    oUF.colors.reaction[3] = { .9, .4, .1 } -- unfriendly
+    oUF.colors.reaction[4] = { 1, .8, 0 }   -- neutral
+    oUF.colors.reaction[5] = { .2, .6, .1 } -- friendly
+    oUF.colors.reaction[6] = { .4, .8, .2 } -- honored
+    oUF.colors.reaction[7] = { .3, .8, .4 } -- revered
+    oUF.colors.reaction[8] = { .3, .9, .6 } -- exalted
 
     -- add ouf tags
     oUF.Tags.Methods['kui:hp'] = function(u,r)
@@ -65,13 +65,13 @@ oUF:Factory(function(self)
     end
     oUF.Tags.Events['kui:pp'] = 'UNIT_POWER UNIT_POWER_FREQUENT'
 
-	-- Spawn individual units ----------------------------------------------
-	self:SetActiveStyle("KuitwoMain")
-	SpawnFrame('player')
-	SpawnFrame('pet')
-	SpawnFrame('pettarget')
-	SpawnFrame('target')
-	SpawnFrame('targettarget')
-	SpawnFrame('focus')
-	SpawnFrame('focustarget')
+    -- Spawn individual units ----------------------------------------------
+    self:SetActiveStyle("KuitwoMain")
+    SpawnFrame('player')
+    SpawnFrame('pet')
+    SpawnFrame('pettarget')
+    SpawnFrame('target')
+    SpawnFrame('targettarget')
+    SpawnFrame('focus')
+    SpawnFrame('focustarget')
 end)

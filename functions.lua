@@ -1,26 +1,26 @@
 --[[
-	oUF Kui
-	Kesava-Auchindoun
-	All rights reserved
+    oUF Kui
+    Kesava-Auchindoun
+    All rights reserved
 
-	Element/frame helper functions
+    Element/frame helper functions
 ]]
 local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
 -------------------------------------------------------------------- geometry --
 do
-	local styles = { -- sizes
-		['player'] = { 197, 16 },
-		['target'] = { 197, 25 },
+    local styles = { -- sizes
+        ['player'] = { 197, 16 },
+        ['target'] = { 197, 25 },
         ['targettarget'] = { 100, 16 }
-	}
-	local geometry = { -- positions
-		['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
-		['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
-		['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
+    }
+    local geometry = { -- positions
+        ['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
+        ['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
+        ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
-	}
+    }
 
     local SetPoint = function(frame,point_tbl)
         if type(point_tbl[2]) == 'string' then
@@ -30,28 +30,28 @@ do
         frame:SetPoint(unpack(point_tbl))
     end
 
-	ns.SetFrameGeometry = function(self)
+    ns.SetFrameGeometry = function(self)
         local geotable = self.framekey and geometry[self.framekey] or geometry[self.unit]
 
-		if geotable then
-			local style = geotable[1]
-			local point = geotable[2]
-			local relpoint = geotable[3]
+        if geotable then
+            local style = geotable[1]
+            local point = geotable[2]
+            local relpoint = geotable[3]
 
-			if style and styles[style] then
-				self:SetSize(unpack(styles[style]))
-			end
+            if style and styles[style] then
+                self:SetSize(unpack(styles[style]))
+            end
 
-			if point then
+            if point then
                 self:ClearAllPoints()
                 SetPoint(self,point)
-			end
+            end
 
-			if relpoint then
+            if relpoint then
                 SetPoint(self,relpoint)
-			end
-		end
-	end
+            end
+        end
+    end
 
     local text_geo = {
         ['default'] = {
@@ -112,79 +112,79 @@ do
 end
 --------------------------------------------------------------- dropdown menu --
 do
-	local dropdown = CreateFrame('Frame', addon..'UnitDropDownMenu', UIParent, 'UIDropDownMenuTemplate')
+    local dropdown = CreateFrame('Frame', addon..'UnitDropDownMenu', UIParent, 'UIDropDownMenuTemplate')
 
-	ns.UnitMenu = function(self)
-		dropdown:SetParent(self)
-		return ToggleDropDownMenu(1,nil,dropdown,'cursor',-3,0)
-	end
+    ns.UnitMenu = function(self)
+        dropdown:SetParent(self)
+        return ToggleDropDownMenu(1,nil,dropdown,'cursor',-3,0)
+    end
 
-	local function DropdownInit(self)
-		local unit = self:GetParent().unit
-		if not unit then return end
-		local menu,name,id
+    local function DropdownInit(self)
+        local unit = self:GetParent().unit
+        if not unit then return end
+        local menu,name,id
 
-		if UnitIsUnit(unit,'player') then
-			menu = 'SELF'
-		elseif UnitIsUnit(unit,'vehicle') then
-			menu = 'VEHICLE'
-		elseif UnitIsUnit(unit,'pet') then
-			menu = 'PET'
-		elseif UnitIsPlayer(unit) then
-			id = UnitInRaid(unit)
-			if id then
-				menu = 'RAID_PLAYER'
-				name = GetRaidRosterInfo(id)
-			elseif UnitInParty(unit) then
-				menu = 'PARTY'
-			else
-				menu = 'PLAYER'
-			end
-		else
-			menu = 'TARGET'
-			name = RAID_TARGET_ICON
-		end
+        if UnitIsUnit(unit,'player') then
+            menu = 'SELF'
+        elseif UnitIsUnit(unit,'vehicle') then
+            menu = 'VEHICLE'
+        elseif UnitIsUnit(unit,'pet') then
+            menu = 'PET'
+        elseif UnitIsPlayer(unit) then
+            id = UnitInRaid(unit)
+            if id then
+                menu = 'RAID_PLAYER'
+                name = GetRaidRosterInfo(id)
+            elseif UnitInParty(unit) then
+                menu = 'PARTY'
+            else
+                menu = 'PLAYER'
+            end
+        else
+            menu = 'TARGET'
+            name = RAID_TARGET_ICON
+        end
 
-		if menu then
-			UnitPopup_ShowMenu(self,menu,unit,name,id)
-		end
-	end
+        if menu then
+            UnitPopup_ShowMenu(self,menu,unit,name,id)
+        end
+    end
 
-	UIDropDownMenu_Initialize(dropdown, DropdownInit, 'MENU')
+    UIDropDownMenu_Initialize(dropdown, DropdownInit, 'MENU')
 end
 --------------------------------------------------------- status bar creation --
 do
-	local texture = 'Interface\\AddOns\\Kui_Media\\t\\bar'
-	local SetKuiStatusBarColor = function(self,r,g,b)
-		-- set colour of bg too
-		self.bg:SetVertexColor(r,g,b)
-		self:SetStatusBarColor_(r,g,b)
-	end
+    local texture = 'Interface\\AddOns\\Kui_Media\\t\\bar'
+    local SetKuiStatusBarColor = function(self,r,g,b)
+        -- set colour of bg too
+        self.bg:SetVertexColor(r,g,b)
+        self:SetStatusBarColor_(r,g,b)
+    end
 
-	ns.CreateStatusBar = function(parent)
-		local bar = CreateFrame('StatusBar',nil,parent)
-		bar:SetStatusBarTexture(texture,'BACKGROUND')
+    ns.CreateStatusBar = function(parent)
+        local bar = CreateFrame('StatusBar',nil,parent)
+        bar:SetStatusBarTexture(texture,'BACKGROUND')
 
-		bar.bg = bar:CreateTexture(nil,'BACKGROUND')
-		bar.bg:SetTexture(texture)
-		bar.bg:SetAllPoints(bar)
-		bar.bg:SetAlpha(.3)
+        bar.bg = bar:CreateTexture(nil,'BACKGROUND')
+        bar.bg:SetTexture(texture)
+        bar.bg:SetAllPoints(bar)
+        bar.bg:SetAlpha(.3)
 
-		if bar.bg then
-			bar.SetStatusBarColor_ = bar.SetStatusBarColor
-			bar.SetStatusBarColor = SetKuiStatusBarColor
-		end
+        if bar.bg then
+            bar.SetStatusBarColor_ = bar.SetStatusBarColor
+            bar.SetStatusBarColor = SetKuiStatusBarColor
+        end
 
-		return bar
-	end
+        return bar
+    end
 end
 ----------------------------------------------------------------------- hooks --
 ------------------------------------------------------------------- mouseover --
 do
-	ns.UnitOnEnter = function(frame,...)
-		UnitFrame_OnEnter(frame,...)
-	end
-	ns.UnitOnLeave = function(frame,...)
-		UnitFrame_OnLeave(frame,...)
-	end
+    ns.UnitOnEnter = function(frame,...)
+        UnitFrame_OnEnter(frame,...)
+    end
+    ns.UnitOnLeave = function(frame,...)
+        UnitFrame_OnLeave(frame,...)
+    end
 end

@@ -1,9 +1,9 @@
 --[[
-	oUF Kui
-	Kesava-Auchindoun
-	All rights reserved
+    oUF Kui
+    Kesava-Auchindoun
+    All rights reserved
 
-	Element creation functions
+    Element creation functions
 ]]
 local addon,ns=...
 local oUF = oUF
@@ -59,50 +59,50 @@ end
 
 ------------------------------------------------------------------ health bar --
 local function CreateHealthBar(self)
-	self.Health = ns.CreateStatusBar(self)
-	self.Health:SetPoint('TOPLEFT',1,-1)
-	self.Health:SetPoint('BOTTOMRIGHT',-1,1)
-	self.Health:SetStatusBarColor(.59,.05,.05)
+    self.Health = ns.CreateStatusBar(self)
+    self.Health:SetPoint('TOPLEFT',1,-1)
+    self.Health:SetPoint('BOTTOMRIGHT',-1,1)
+    self.Health:SetStatusBarColor(.59,.05,.05)
 
-	self.Health.frequentUpdates = true
-	self.Health.Smooth = true
+    self.Health.frequentUpdates = true
+    self.Health.Smooth = true
 
     if self.unit == 'player' then
         -- also make spark
         CreateStatusBarSpark(self.Health)
-	else
-		self.Health.colorReaction = true
-		self.Health.colorClass = true
-		self.Health.colorDisconnected = true
-		self.Health.colorTapping = true
-	end
+    else
+        self.Health.colorReaction = true
+        self.Health.colorClass = true
+        self.Health.colorDisconnected = true
+        self.Health.colorTapping = true
+    end
 end
 -------------------------------------------------------------------- portrait --
 local function CreatePortrait(self)
-	self.Portrait = CreateFrame('PlayerModel',nil,self)
-	self.Portrait.type = '3D'
-	self.Portrait:SetAllPoints(self.Health)
+    self.Portrait = CreateFrame('PlayerModel',nil,self)
+    self.Portrait.type = '3D'
+    self.Portrait:SetAllPoints(self.Health)
 
-	self.Portrait.shade = self.Portrait:CreateTexture(nil,'OVERLAY')
-	self.Portrait.shade:SetTexture('Interface\\AddOns\\Kui_Media\\t\\innerShade')
-	self.Portrait.shade:SetAllPoints(self)
-	self.Portrait.shade:SetBlendMode('BLEND')
-	self.Portrait.shade:SetVertexColor(0,0,0,.8)
+    self.Portrait.shade = self.Portrait:CreateTexture(nil,'OVERLAY')
+    self.Portrait.shade:SetTexture('Interface\\AddOns\\Kui_Media\\t\\innerShade')
+    self.Portrait.shade:SetAllPoints(self)
+    self.Portrait.shade:SetBlendMode('BLEND')
+    self.Portrait.shade:SetVertexColor(0,0,0,.8)
 
-	self.Health:SetAlpha(.7)
-	self.Health:SetFrameLevel(2)
-	self.Portrait:SetFrameLevel(1)
+    self.Health:SetAlpha(.7)
+    self.Health:SetFrameLevel(2)
+    self.Portrait:SetFrameLevel(1)
 end
 ------------------------------------------------------------------------ mana --
 local function CreatePowerBar(self)
-	self.Power = ns.CreateStatusBar(self)
-	-- mana bar location is different per-layout
+    self.Power = ns.CreateStatusBar(self)
+    -- mana bar location is different per-layout
 
-	self.Power.frequentUpdates = true
-	self.Power.Smooth = true
-	self.Power.colorDisconnected = true
-	self.Power.colorTapping = true
-	self.Power.colorPower = true
+    self.Power.frequentUpdates = true
+    self.Power.Smooth = true
+    self.Power.colorDisconnected = true
+    self.Power.colorTapping = true
+    self.Power.colorPower = true
 
     if self.unit == 'player' then
         -- power text
@@ -205,14 +205,14 @@ local function CreateBackground(self, frame)
         frame = self
     end
 
-	frame:SetBackdrop({
-		bgFile=kui.m.t.solid,
-		edgeFile=kui.m.t.solid,
-		edgeSize=1,
-		insets={top=1,bottom=1,left=1,right=1}
-	})
-	frame:SetBackdropColor(0,0,0,.8)
-	frame:SetBackdropBorderColor(0,0,0,1)
+    frame:SetBackdrop({
+        bgFile=kui.m.t.solid,
+        edgeFile=kui.m.t.solid,
+        edgeSize=1,
+        insets={top=1,bottom=1,left=1,right=1}
+    })
+    frame:SetBackdropColor(0,0,0,.8)
+    frame:SetBackdropBorderColor(0,0,0,1)
 
     return frame
 end
@@ -246,7 +246,7 @@ function ns.CreateMainElements(self)
     self.overlay:SetFrameLevel(7)
     self.overlay:SetAllPoints(self)
 
-	CreateHealthBar(self)
+    CreateHealthBar(self)
     CreatePortrait(self)
 
     if self.unit ~= 'targettarget' then
@@ -261,16 +261,16 @@ function ns.CreateMainElements(self)
 end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
-	self.menu = ns.UnitMenu
-	self:SetScript('OnEnter', ns.UnitOnEnter)
-	self:SetScript('OnLeave', ns.UnitOnLeave)
-	self:RegisterForClicks('AnyUp')
+    self.menu = ns.UnitMenu
+    self:SetScript('OnEnter', ns.UnitOnEnter)
+    self:SetScript('OnLeave', ns.UnitOnLeave)
+    self:RegisterForClicks('AnyUp')
 
-	-- create backdrop & border
+    -- create backdrop & border
     CreateBackground(self)
-	self:SetBackdropColor(0,0,0,.2)
+    self:SetBackdropColor(0,0,0,.2)
 
     CreateGlow(self)
 
-	ns.SetFrameGeometry(self)
+    ns.SetFrameGeometry(self)
 end
