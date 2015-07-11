@@ -127,7 +127,7 @@ local function CreatePortrait(self)
 end
 -------------------------------------------------------------------- cast bar --
 local function CreateCastBar(self)
-    local bar = ns.CreateStatusBar(self)
+    local bar = ns.CreateStatusBar(self,self.unit=='target')
 
     bar:SetStatusBarColor(.35,.35,.48)
     bar.framekey = self.unit..'_castbar'
@@ -143,9 +143,11 @@ local function CreateCastBar(self)
     bar:SetStatusBarTexture(kui.m.t.oldbar)
     bar.bg:SetTexture(kui.m.t.oldbar)
 
-    bar.text = bar:CreateFontString(nil,'OVERLAY')
-    ns.SetTextGeometry(self,bar.text,'health')
-    bar.text:SetText('Woo test')
+    bar.Text = bar:CreateFontString(nil,'OVERLAY')
+    ns.SetTextGeometry(self,bar.Text,'cast_name')
+
+    bar.Time = bar:CreateFontString(nil,'OVERLAY')
+    ns.SetTextGeometry(self,bar.Time,'cast_time')
 
     CreateStatusBarSpark(bar)
 
@@ -153,7 +155,7 @@ local function CreateCastBar(self)
 end
 ------------------------------------------------------------------------ mana --
 local function CreatePowerBar(self)
-    self.Power = ns.CreateStatusBar(self)
+    self.Power = ns.CreateStatusBar(self,true)
     -- mana bar location is different per-layout
 
     self.Power.frequentUpdates = true
@@ -173,34 +175,6 @@ local function CreatePowerBar(self)
 
         self:Tag(pp,'[kui:pp]')
         self.Power.text = pp
-
-        -- reverse player power bar
-        local bar = self.Power
-        local function OnUpdateReverser(self)
-            local tex = self.__owner:GetStatusBarTexture()
-            local max,width,val =
-                select(2, self.__owner:GetMinMaxValues()),
-                self.__owner:GetWidth(),
-                self.__owner:GetValue()
-
-            tex:ClearAllPoints()
-            tex:SetPoint('BOTTOMRIGHT')
-            tex:SetPoint('TOPLEFT', self.__owner, 'TOPRIGHT', -((val/max)*width),0)
-
-            self:Hide()
-        end
-        local function OnChange(self)
-            self.reverser:Show()
-        end
-
-        bar.reverser = CreateFrame('Frame',nil,bar)
-        bar.reverser:Hide()
-        bar.reverser:SetScript('OnUpdate',OnUpdateReverser)
-        bar.reverser.__owner = bar
-
-        bar:HookScript('OnSizeChanged',OnChange)
-        bar:HookScript('OnValueChanged',OnChange)
-        bar:HookScript('OnMinMaxChanged',OnChange)
 
         -- add spark
         CreateStatusBarSpark(self.Power)

@@ -12,19 +12,18 @@ local kui = LibStub('Kui-1.0')
 do
     local styles = { -- sizes
         ['player'] = { 197, 16 },
-        ['player_castbar'] = { 200, 24 },
         ['target'] = { 197, 25 },
         ['targettarget'] = { 100, 16 },
+        ['player_castbar'] = { 200, 24 },
+        ['target_castbar'] = { 240, 24 },
     }
     local geometry = { -- positions
         ['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
         ['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
         ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
-        ['player_castbar'] = {
-            'player_castbar',
-            { 'CENTER', UIParent, 0, 28 }
-        }
+        ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 0, -122 } },
+        ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, 0, -90 } },
     }
 
     local SetPoint = function(frame,point_tbl)
@@ -66,7 +65,15 @@ do
         },
         ['targettarget'] = {
             ['name'] = { 'TOP', 0, 3 }
-        }
+        },
+        ['player'] = {
+            ['cast_name'] = { 'LEFT',   5, 0 },
+            ['cast_time'] = { 'RIGHT', -5, 0 },
+        },
+        ['target'] = {
+            ['cast_name'] = { 'RIGHT', -5, 0 },
+            ['cast_time'] = { 'LEFT',   5, 0 },
+        },
     }
     local text_font_face = kui.m.f.francois
     local text_font_default = { 10, 'THINOUTLINE' }
@@ -166,7 +173,24 @@ do
         self:SetStatusBarColor_(r,g,b)
     end
 
-    ns.CreateStatusBar = function(parent)
+    local function OnUpdateReverser(self)
+        local tex = self.__owner:GetStatusBarTexture()
+        local max,width,val =
+            select(2, self.__owner:GetMinMaxValues()),
+            self.__owner:GetWidth(),
+            self.__owner:GetValue()
+
+        tex:ClearAllPoints()
+        tex:SetPoint('BOTTOMRIGHT')
+        tex:SetPoint('TOPLEFT', self.__owner, 'TOPRIGHT', -((val/max)*width),0)
+
+        self:Hide()
+    end
+    local function OnChange(self)
+        self.reverser:Show()
+    end
+
+    ns.CreateStatusBar = function(parent,reverse)
         local bar = CreateFrame('StatusBar',nil,parent)
         bar:SetStatusBarTexture(texture,'BACKGROUND')
 
@@ -178,6 +202,17 @@ do
         if bar.bg then
             bar.SetStatusBarColor_ = bar.SetStatusBarColor
             bar.SetStatusBarColor = SetKuiStatusBarColor
+        end
+
+        if reverse then
+            bar.reverser = CreateFrame('Frame',nil,bar)
+            bar.reverser:Hide()
+            bar.reverser:SetScript('OnUpdate',OnUpdateReverser)
+            bar.reverser.__owner = bar
+
+            bar:HookScript('OnSizeChanged',OnChange)
+            bar:HookScript('OnValueChanged',OnChange)
+            bar:HookScript('OnMinMaxChanged',OnChange)
         end
 
         return bar
