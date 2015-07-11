@@ -10,26 +10,28 @@ local oUF = oUF
 local kui = LibStub('Kui-1.0')
 
 local function FadeSpark(self)
-    local min,max = self:GetMinMaxValues()
-    local val = self:GetValue()
-    local show_val = (max / 100) * 80
-    if val == max then
-        self.text:SetAlpha(0)
-        self.spark:SetAlpha(0)
-        return
-    elseif val < show_val then
-        self.text:SetAlpha(1)
-
-        if val == 0 then
+    if self.spark_fade then
+        local min,max = self:GetMinMaxValues()
+        local val = self:GetValue()
+        local show_val = (max / 100) * 80
+        if val == max then
+            self.text:SetAlpha(0)
             self.spark:SetAlpha(0)
+            return
+        elseif val < show_val then
+            self.text:SetAlpha(1)
+
+            if val == 0 then
+                self.spark:SetAlpha(0)
+            else
+                self.spark:SetAlpha(1)
+            end
         else
-            self.spark:SetAlpha(1)
+            -- fade text and spark depending on value
+            local alpha = 1 - ((val - show_val) / (max - show_val))
+            self.text:SetAlpha(alpha)
+            self.spark:SetAlpha(alpha)
         end
-    else
-        -- fade text and spark depending on value
-        local alpha = 1 - ((val - show_val) / (max - show_val))
-        self.text:SetAlpha(alpha)
-        self.spark:SetAlpha(alpha)
     end
 
     -- also update spark colour to match the bar
@@ -37,7 +39,7 @@ local function FadeSpark(self)
     self.spark:SetVertexColor(r+.3,g+.3,b+.3)
 end
 
-local function CreateStatusBarSpark(bar)
+local function CreateStatusBarSpark(bar,no_fade)
     local texture = bar:GetStatusBarTexture()
     local spark = bar:CreateTexture(nil,'OVERLAY')
     spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
@@ -51,6 +53,7 @@ local function CreateStatusBarSpark(bar)
         spark:SetPoint('BOTTOM', texture, 'BOTTOMRIGHT', -1, -4)
     end
 
+    bar.spark_fade = not no_fade
     bar.spark = spark
 
     bar:HookScript('OnValueChanged',FadeSpark)
@@ -129,7 +132,7 @@ end
 local function CreateCastBar(self)
     local bar = ns.CreateStatusBar(self,self.unit=='target')
 
-    bar:SetStatusBarColor(.35,.35,.48)
+    bar:SetStatusBarColor(.3,.3,.43)
     bar.framekey = self.unit..'_castbar'
     ns.SetFrameGeometry(bar)
 
@@ -149,7 +152,7 @@ local function CreateCastBar(self)
     bar.Time = bar:CreateFontString(nil,'OVERLAY')
     ns.SetTextGeometry(self,bar.Time,'cast_time')
 
-    CreateStatusBarSpark(bar)
+    CreateStatusBarSpark(bar,true)
 
     self.Castbar = bar
 end
