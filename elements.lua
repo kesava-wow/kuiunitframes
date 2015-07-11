@@ -56,7 +56,39 @@ local function CreateStatusBarSpark(bar)
     bar:HookScript('OnValueChanged',FadeSpark)
     bar:HookScript('OnMinMaxChanged',FadeSpark)
 end
+--------------------------------------------------- generic background helper --
+local function CreateBackground(self,frame,glow)
+    if frame then
+        frame = CreateFrame('Frame',nil,self)
+    else
+        frame = self
+    end
 
+    local edgeFile, edgeSize
+    if glow then
+        edgeFile = kui.m.t.shadow
+        edgeSize = 5
+    else
+        edgeFile = kui.m.t.solid
+        edgeSize = 1
+    end
+
+    frame:SetBackdrop({
+        bgFile   = kui.m.t.solid,
+        edgeFile = edgeFile,
+        edgeSize = edgeSize,
+        insets   = {top=edgeSize,bottom=edgeSize,left=edgeSize,right=edgeSize}
+    })
+    frame:SetBackdropColor(0,0,0,.8)
+
+    if glow then
+        frame:SetBackdropBorderColor(0,0,0,.3)
+    else
+        frame:SetBackdropBorderColor(0,0,0,1)
+    end
+
+    return frame
+end
 ------------------------------------------------------------------ health bar --
 local function CreateHealthBar(self)
     self.Health = ns.CreateStatusBar(self)
@@ -92,6 +124,32 @@ local function CreatePortrait(self)
     self.Health:SetAlpha(.7)
     self.Health:SetFrameLevel(2)
     self.Portrait:SetFrameLevel(1)
+end
+-------------------------------------------------------------------- cast bar --
+local function CreateCastBar(self)
+    local bar = ns.CreateStatusBar(self)
+
+    bar:SetStatusBarColor(.35,.35,.48)
+    bar.framekey = self.unit..'_castbar'
+    ns.SetFrameGeometry(bar)
+
+    bar.fbg = CreateBackground(bar,true,true)
+    bar.fbg:SetPoint('TOPLEFT', bar, -6, 6)
+    bar.fbg:SetPoint('BOTTOMRIGHT', bar, 6, -6)
+
+    bar:SetFrameLevel(3)
+    bar.fbg:SetFrameLevel(2)
+
+    bar:SetStatusBarTexture(kui.m.t.oldbar)
+    bar.bg:SetTexture(kui.m.t.oldbar)
+
+    bar.text = bar:CreateFontString(nil,'OVERLAY')
+    ns.SetTextGeometry(self,bar.text,'health')
+    bar.text:SetText('Woo test')
+
+    CreateStatusBarSpark(bar)
+
+    self.Castbar = bar
 end
 ------------------------------------------------------------------------ mana --
 local function CreatePowerBar(self)
@@ -197,25 +255,6 @@ local function CreateGlow(self)
 
     self.glow = glow
 end
----------------------------------------------------------- generic background --
-local function CreateBackground(self, frame)
-    if frame then
-        frame = CreateFrame('Frame',nil,self)
-    else
-        frame = self
-    end
-
-    frame:SetBackdrop({
-        bgFile=kui.m.t.solid,
-        edgeFile=kui.m.t.solid,
-        edgeSize=1,
-        insets={top=1,bottom=1,left=1,right=1}
-    })
-    frame:SetBackdropColor(0,0,0,.8)
-    frame:SetBackdropBorderColor(0,0,0,1)
-
-    return frame
-end
 ------------------------------------------------------------------- main base --
 local function CreatePlayerElements(self)
     -- create power bar background on opposite side of action buttons
@@ -257,6 +296,10 @@ function ns.CreateMainElements(self)
         CreatePlayerElements(self)
     else
         CreateNameText(self)
+    end
+
+    if self.unit == 'player' or self.unit == 'target' then
+        CreateCastBar(self)
     end
 end
 ------------------------------------------------------------------ frame init --
