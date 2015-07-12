@@ -155,6 +155,39 @@ local function CreateCastBar(self)
     CreateStatusBarSpark(bar,true)
 
     self.Castbar = bar
+
+    if self.unit == 'player' or self.unit == 'target' then
+        -- create spell icon
+        local icon = bar:CreateTexture(nil,'ARTWORK')
+        icon:SetTexCoord(.1,.9,.1,.9)
+
+        icon.bg = bar:CreateTexture(nil, 'BACKGROUND')
+        icon.bg:SetTexture(kui.m.t.solid)
+        icon.bg:SetVertexColor(0, 0, 0)
+        icon.bg:SetPoint('TOPLEFT', icon, 'TOPLEFT', -1, 1)
+        icon.bg:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', 1, -1)
+
+        icon:SetSize(24,24)
+
+        if self.unit == 'player' then
+            icon:SetPoint('RIGHT', bar, 'LEFT', -3, 0)
+        else
+            icon:SetPoint('LEFT', bar, 'RIGHT', 3, 0)
+        end
+
+        bar.Icon = icon
+    end
+
+    if self.unit == 'player' then
+        -- create safe zone
+        local sz = bar:CreateTexture(nil,'OVERLAY')
+        bar.SafeZone = sz
+
+        sz:SetTexture(kui.m.t.oldbar)
+        sz:SetPoint('TOPRIGHT')
+        sz:SetPoint('BOTTOMRIGHT')
+        sz:SetVertexColor(.1, .9, .1, .3)
+    end
 end
 ------------------------------------------------------------------------ mana --
 local function CreatePowerBar(self)
@@ -171,8 +204,6 @@ local function CreatePowerBar(self)
         -- power text
         local pp = self.overlay:CreateFontString(nil,'OVERLAY')
         pp:SetFont(kui.m.f.francois, 10, 'THINOUTLINE')
-        pp:SetShadowOffset(1,-1)
-        pp:SetShadowColor(0,0,0,.5)
 
         pp:SetPoint('LEFT',self.Power,5,0)
 
@@ -186,19 +217,14 @@ end
 ------------------------------------------------------------------------ text --
 local function CreateHealthText(self)
     local hp = self.overlay:CreateFontString(nil,'OVERLAY')
-    hp:SetShadowOffset(1,-1)
-    hp:SetShadowColor(0,0,0,.5)
+    ns.SetTextGeometry(self,hp,'health')
 
     if self.unit == 'player' then
         self.Health.text = hp
     end
 
-    ns.SetTextGeometry(self,hp,'health')
-
     if self.unit == 'target' then
         local curhp = self.overlay:CreateFontString(nil,'OVERLAY')
-        curhp:SetShadowOffset(1,-1)
-        curhp:SetShadowColor(0,0,0,.5)
 
         ns.SetTextGeometry(self,curhp,'curhp')
 
@@ -211,9 +237,6 @@ local function CreateHealthText(self)
 end
 local function CreateNameText(self)
     local name = self.overlay:CreateFontString(nil,'OVERLAY')
-    name:SetShadowOffset(1,-1)
-    name:SetShadowColor(0,0,0,.5)
-
     ns.SetTextGeometry(self,name,'name')
 
     self.name = name

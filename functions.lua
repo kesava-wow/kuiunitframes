@@ -14,16 +14,16 @@ do
         ['player'] = { 197, 16 },
         ['target'] = { 197, 25 },
         ['targettarget'] = { 100, 16 },
-        ['player_castbar'] = { 200, 24 },
-        ['target_castbar'] = { 240, 24 },
+        ['player_castbar'] = { 168, 24 },
+        ['target_castbar'] = { 215, 24 },
     }
     local geometry = { -- positions
         ['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
         ['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
         ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
-        ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 0, -122 } },
-        ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, 0, -90 } },
+        ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -122 } },
+        ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, -13, -90 } },
     }
 
     local SetPoint = function(frame,point_tbl)
@@ -76,14 +76,13 @@ do
         },
     }
     local text_font_face = kui.m.f.francois
-    local text_font_default = { 10, 'THINOUTLINE' }
+    local text_font_outline = 'THINOUTLINE'
+    local text_font_size = 10
     local text_font = {
-        ['default'] = {
-            ['name'] = { 11, 'THINOUTLINE' },
+        ['default'] = {},
+        ['target'] = {
+            ['name'] = 11,
         },
-        ['targettarget'] = {
-            ['name'] = { 10, 'THINOUTLINE' }
-        }
     }
 
     ns.SetTextGeometry = function(frame,text,geokey,rel)
@@ -116,10 +115,13 @@ do
 
         -- also set font
         if frame.unit and text_font[frame.unit] and text_font[frame.unit][geokey] then
-            text:SetFont(text_font_face, unpack(text_font[frame.unit][geokey]))
+            text:SetFont(text_font_face, text_font[frame.unit][geokey], text_font_outline)
         else
-            text:SetFont(text_font_face, unpack(text_font['default'][geokey] or text_font_default))
+            text:SetFont(text_font_face, (text_font['default'][geokey] or text_font_size), text_font_outline)
         end
+
+        text:SetShadowOffset(1,-1)
+        text:SetShadowColor(0,0,0,.5)
     end
 end
 --------------------------------------------------------------- dropdown menu --
