@@ -9,6 +9,30 @@ local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
 
+-- sort own auras first (own short > own long > other short > other long > timeless)
+local auras_SelfSort = function(a,b)
+    if (a.own and b.own) or (not a.own and not b.own) then
+        if a.expiration and b.expiration then
+            return a.expiration < b.expiration
+        else
+            return a.expiration and not b.expiration
+        end
+    else
+        return a.own and not b.own
+    end
+end
+local auras_PreShowButton = function(self,button)
+    button.own = select(8, UnitAura(self.frame.unit, button.index, self.filter))
+    button.own = button.own == 'player'
+
+    -- desaturate other buffs on friendlies, or other debuffs on enemies
+    if (self.unit_is_friend and self.filter == 'HELPFUL') or
+       (not self.unit_is_friend and self.filter == 'HARMFUL')
+    then
+        button.icon:SetDesaturated(not button.own)
+    end
+end
+
 local function FadeSpark(self)
     if self.spark_fade then
         local min,max = self:GetMinMaxValues()
@@ -292,6 +316,8 @@ local function CreateAuras(self)
         x_spacing = -1,
         x_offset = -16,
         y_offset = -16,
+        sort = auras_SelfSort,
+        PreShowButton = auras_PreShowButton
     }
     local debuffs = {
         filter = 'HARMFUL',
@@ -304,6 +330,8 @@ local function CreateAuras(self)
         x_spacing = 1,
         x_offset = 16,
         y_offset = -16,
+        sort = auras_SelfSort,
+        PreShowButton = auras_PreShowButton
     }
 
     self.KuiAuras = { buffs, debuffs }
