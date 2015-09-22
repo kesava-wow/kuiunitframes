@@ -69,6 +69,7 @@ do
         ['player'] = {
             ['cast_name'] = { 'LEFT',   5, 0 },
             ['cast_time'] = { 'RIGHT', -5, 0 },
+            ['status'] = { 'LEFT', 5, 0 },
         },
         ['target'] = {
             ['cast_name'] = { 'RIGHT', -5, 0 },

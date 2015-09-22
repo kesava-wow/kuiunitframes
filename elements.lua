@@ -59,6 +59,22 @@ local function CreateStatusBarSpark(bar,no_fade)
     bar:HookScript('OnValueChanged',FadeSpark)
     bar:HookScript('OnMinMaxChanged',FadeSpark)
 end
+
+local function StatusTextUpdateTag(self)
+    local prevText = self:GetText()
+    self:orig_UpdateTag()
+
+    if self:GetText() == prevText then return end
+
+    -- flash status text when it changes
+    kui.frameFade(self, {
+        mode = 'OUT',
+        startAlpha = 1,
+        endAlpha = .5,
+        timeToFade = .5,
+        startDelay = .5
+    })
+end
 --------------------------------------------------- generic background helper --
 local function CreateBackground(self,frame,glow)
     if frame then
@@ -221,6 +237,14 @@ local function CreateHealthText(self)
 
     if self.unit == 'player' then
         self.Health.text = hp
+
+        local status = self.overlay:CreateFontString(nil,'OVERLAY')
+        ns.SetTextGeometry(self,status,'status')
+        self.Health.status = status
+        self:Tag(status,'[kui:status]')
+
+        status.orig_UpdateTag = status.UpdateTag
+        status.UpdateTag = StatusTextUpdateTag
     end
 
     if self.unit == 'target' then
@@ -254,6 +278,29 @@ local function CreateGlow(self)
     glow:SetBackdropBorderColor(0,0,0,.3)
 
     self.glow = glow
+end
+----------------------------------------------------------------------- auras --
+local function CreateAuras(self)
+    local buffs = {
+        filter = 'HELPFUL',
+        point = { 'BOTTOMLEFT', 'RIGHT', 'LEFT' },
+        parent = self,
+        max = 10,
+        size = 15,
+        x_spacing = -1,
+        x_offset = -16,
+    }
+    local debuffs = {
+        filter = 'HARMFUL',
+        point = { 'BOTTOMRIGHT', 'LEFT', 'RIGHT' },
+        parent = self,
+        max = 10,
+        size = 15,
+        x_spacing = 1,
+        x_offset = 16,
+    }
+
+    self.KuiAuras = { buffs, debuffs }
 end
 ------------------------------------------------------------------- main base --
 local function CreatePlayerElements(self)
@@ -300,6 +347,10 @@ function ns.CreateMainElements(self)
 
     if self.unit == 'player' or self.unit == 'target' then
         CreateCastBar(self)
+    end
+
+    if self.unit == 'target' then
+        CreateAuras(self)
     end
 end
 ------------------------------------------------------------------ frame init --

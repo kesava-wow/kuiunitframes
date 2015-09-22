@@ -64,6 +64,34 @@ oUF:Factory(function(self)
         return kui.num(UnitPower(u or r))
     end
     oUF.Tags.Events['kui:pp'] = 'UNIT_POWER UNIT_POWER_FREQUENT'
+    oUF.Tags.Methods['kui:status'] = function()
+        local final
+        if UnitAffectingCombat('player') then
+            final = '|cffffaaaacbt|r'
+        end
+
+        if IsResting() then
+            final = (final and final..' ' or '')..'|cffffffaarst|r'
+        end
+
+        if UnitIsPVP('player') and GetPVPDesired() == 0 then
+            if IsPVPTimerRunning() then
+                local timer = math.floor(GetPVPTimer() / 1000)
+                final = (final and final..' ' or '')..
+                    '|cffbbffbb'..(timer >= 60 and
+                    math.floor(timer / 60)..'m' or
+                    timer..'s')..'|r'
+            else
+                final = (final and final..' ' or '')..'|cffaaffaapvp|r'
+            end
+        end
+
+        return final
+    end
+    oUF.Tags.Events['kui:status'] = 'PLAYER_UPDATE_RESTING PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED PLAYER_FLAGS_CHANGED UNIT_FACTION'
+    oUF.Tags.SharedEvents['PLAYER_REGEN_ENABLED'] = true
+    oUF.Tags.SharedEvents['PLAYER_REGEN_DISABLED'] = true
+    oUF.Tags.SharedEvents['PLAYER_FLAGS_CHANGED'] = true
 
     -- Spawn individual units ----------------------------------------------
     self:SetActiveStyle("KuitwoMain")
