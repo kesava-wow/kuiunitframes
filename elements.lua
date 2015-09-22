@@ -284,20 +284,26 @@ local function CreateAuras(self)
     local buffs = {
         filter = 'HELPFUL',
         point = { 'BOTTOMLEFT', 'RIGHT', 'LEFT' },
+        bg = true,
+        mouse = true,
         parent = self,
         max = 10,
         size = 15,
         x_spacing = -1,
         x_offset = -16,
+        y_offset = -16,
     }
     local debuffs = {
         filter = 'HARMFUL',
         point = { 'BOTTOMRIGHT', 'LEFT', 'RIGHT' },
+        bg = true,
+        mouse = true,
         parent = self,
         max = 10,
         size = 15,
         x_spacing = 1,
         x_offset = 16,
+        y_offset = -16,
     }
 
     self.KuiAuras = { buffs, debuffs }
