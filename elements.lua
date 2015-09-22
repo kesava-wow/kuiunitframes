@@ -40,6 +40,8 @@ local auras_PreShowButton = function(self,button)
        (not self.unit_is_friend and self.filter == 'HARMFUL')
     then
         button.icon:SetDesaturated(not button.own)
+    else
+        button.icon:SetDesaturated(false)
     end
 end
 
@@ -321,11 +323,13 @@ local function CreateAuras(self)
         bg = true,
         mouse = true,
         parent = self,
-        max = 10,
+        max = 20,
         size = 15,
         x_spacing = -1,
+        y_spacing = 1,
         x_offset = -16,
         y_offset = -16,
+        rows = 2,
         sort = auras_SelfSort,
         PreShowButton = auras_PreShowButton
     }
@@ -335,11 +339,13 @@ local function CreateAuras(self)
         bg = true,
         mouse = true,
         parent = self,
-        max = 10,
+        max = 20,
         size = 15,
         x_spacing = 1,
+        y_spacing = 1,
         x_offset = 16,
         y_offset = -16,
+        rows = 2,
         sort = auras_SelfSort,
         PreShowButton = auras_PreShowButton
     }
