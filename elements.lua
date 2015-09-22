@@ -11,9 +11,19 @@ local kui = LibStub('Kui-1.0')
 
 -- sort own auras first (own short > own long > other short > other long > timeless)
 local auras_SelfSort = function(a,b)
+    if not a.index and not b.index then
+        return
+    elseif a.index and not b.index then
+        return true
+    elseif not a.index and b.index then
+        return
+    end
+
     if (a.own and b.own) or (not a.own and not b.own) then
         if a.expiration and b.expiration then
             return a.expiration < b.expiration
+        elseif not a.expiration and not b.expiration then
+            return a.index < b.index
         else
             return a.expiration and not b.expiration
         end
