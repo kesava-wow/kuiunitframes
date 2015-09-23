@@ -60,7 +60,6 @@ local function FadeSpark(self)
     local r,g,b = self:GetStatusBarColor()
     self.spark:SetVertexColor(r+.3,g+.3,b+.3)
 end
-
 local function CreateStatusBarSpark(bar,no_fade)
     local texture = bar:GetStatusBarTexture()
     local spark = bar:CreateTexture(nil,'OVERLAY')
@@ -82,11 +81,12 @@ local function CreateStatusBarSpark(bar,no_fade)
     bar:HookScript('OnMinMaxChanged',FadeSpark)
 end
 
-local function StatusTextUpdateTag(self)
+local function StatusText_UpdateTag(self)
     local prevText = self:GetText()
     self:orig_UpdateTag()
 
     if self:GetText() == prevText then return end
+    if MouseIsOver(self:GetParent()) then return end
 
     -- flash status text when it changes
     kui.frameFade(self, {
@@ -94,8 +94,26 @@ local function StatusTextUpdateTag(self)
         startAlpha = 1,
         endAlpha = .5,
         timeToFade = .5,
-        startDelay = .5
+        startDelay = .5,
+        fadeHoldTime = 5,
+        finishedFunc = function(self)
+            kui.frameFade(self, {
+                mode = 'OUT',
+                startAlpha = .5,
+                endAlpha = 0,
+                timeToFade = .5
+            })
+        end
     })
+end
+
+local function Player_OnEnter(self)
+    -- fade in status text on mouseover
+    kui.frameFadeRemoveFrame(self.Health.status)
+    self.Health.status:SetAlpha(1)
+end
+local function Player_OnLeave(self)
+    self.Health.status:SetAlpha(0)
 end
 --------------------------------------------------- generic background helper --
 local function CreateBackground(self,frame,glow)
@@ -266,7 +284,10 @@ local function CreateHealthText(self)
         self:Tag(status,'[kui:status]')
 
         status.orig_UpdateTag = status.UpdateTag
-        status.UpdateTag = StatusTextUpdateTag
+        status.UpdateTag = StatusText_UpdateTag
+
+        self:HookScript('OnEnter', Player_OnEnter)
+        self:HookScript('OnLeave', Player_OnLeave)
     end
 
     if self.unit == 'target' then
@@ -392,8 +413,8 @@ end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
     self.menu = ns.UnitMenu
-    self:SetScript('OnEnter', ns.UnitOnEnter)
-    self:SetScript('OnLeave', ns.UnitOnLeave)
+    self:HookScript('OnEnter', ns.UnitOnEnter)
+    self:HookScript('OnLeave', ns.UnitOnLeave)
     self:RegisterForClicks('AnyUp')
 
     -- create backdrop & border
