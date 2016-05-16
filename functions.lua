@@ -179,11 +179,11 @@ do
     ns.CreateStatusBar = function(parent,reverse)
         local bar = CreateFrame('StatusBar',nil,parent)
         bar:SetStatusBarTexture(texture,'BACKGROUND')
+        bar:SetReverseFill(reverse)
 
         bar.bg = bar:CreateTexture(nil,'BACKGROUND')
         bar.bg:SetTexture(texture)
         bar.bg:SetAllPoints(bar)
-        bar:SetReverseFill(reverse)
         bar.bg:SetAlpha(.3)
 
         if bar.bg then
