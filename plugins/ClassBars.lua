@@ -130,7 +130,7 @@ end
 ------------------------------------------------------- Update generic powers --
 -- must be used as update.f
 local function UpdateGeneric(self, event, ...)
-    local visible, curr = 0
+    local curr = 0
     if cb.type then
         curr = UnitPower(self.unit, cb.type)
     else
@@ -140,7 +140,6 @@ local function UpdateGeneric(self, event, ...)
 
     for k, bar in ipairs(cb.bars) do
         if curr >= k then
-            visible = visible + 1
             bar.bg:SetAlpha(1)
         else
             bar.bg:SetAlpha(.3)
@@ -159,34 +158,22 @@ local function UpdateGenericBar(self,event,...)
 end
 ----------------------------------- Update combo points + anticipation stacks --
 local function UpdateComboPoints(self, event, ...)
-    if event == 'PLAYER_TALENT_UPDATE' or event == 'PLAYER_ENTERING_WORLD' then
-        cb.ANTICIPATION_IS_KNOWN = IsSpellKnown(cb.ANTICIPATION_TALENT_ID)
+    local cur = UnitPower('player',SPELL_POWER_COMBO_POINTS)
 
-        if cb.ANTICIPATION_IS_KNOWN then
-            cb.container:RegisterEvent('UNIT_AURA')
-        else
-            cb.container:UnregisterEvent('UNIT_AURA')
-        end
-    elseif event == 'UNIT_AURA' then
-        -- update anticipation
-        if ... ~= 'player' then return end
-        local stacks = select(4,UnitBuff('player',cb.ANTICIPATION_NAME))
-
-        if stacks or cb.anticipationWasActive then
-            -- change individual bar colours for anticipation
-            for k, bar in ipairs(cb.bars) do
-                if stacks and k <= stacks then
-                    bar:SetStatusBarColor(1,.3,.3)
-                else
-                    bar:SetStatusBarColor(unpack(cb.o.colour))
-                end
+    for i,bar in ipairs(cb.bars) do
+        if cur >= i then
+            if cur > 5 and (cur - 5) >= i then
+                -- anticipation colour
+                bar:SetStatusBarColor(1,.3,.3)
+            else
+                -- standard colour
+                bar:SetStatusBarColor(unpack(cb.o.colour))
             end
+            bar.bg:SetAlpha(1)
+        else
+            bar.bg:SetAlpha(.3)
         end
-
-        cb.anticipationWasActive = stacks ~= nil
     end
-
-    UpdateGeneric(self,event,...)
 end
 ----------------------------------------------------------- Update Totem Bars --
 local function UpdateShamanBar(self, bar)
@@ -734,19 +721,11 @@ local function Enable(self, unit)
         cb.o.update = { ['f'] = UpdateGeneric }
 ---------------------------------------------------------------- combo points --
     elseif cb.class == 'ROGUE' then
-        cb.o.bars   = { {},{},{},{},{} }
-        cb.o.events = { 'UNIT_COMBO_POINTS', 'PLAYER_TALENT_UPDATE' }
+        cb.type = SPELL_POWER_COMBO_POINTS
+        cb.o.bars =   { {},{},{},{},{} }
         cb.o.colour = { 1,1,.1 }
-
+        cb.o.events = { 'UNIT_POWER', 'UNIT_MAXPOWER', 'PLAYER_TALENT_UPDATE' }
         cb.o.update = { ['f'] = UpdateComboPoints }
-
-        cb.event_function = function()
-            return GetComboPoints('player','target')
-        end
-
-        cb.ANTICIPATION_TALENT_ID = 114015
-        cb.ANTICIPATION_SPELL_ID = 115189
-        cb.ANTICIPATION_NAME = GetSpellInfo(cb.ANTICIPATION_SPELL_ID) or 'Anticipation'
     end
 
     self:RegisterEvent('PLAYER_ENTERING_WORLD', Update)
