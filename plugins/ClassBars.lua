@@ -1,6 +1,6 @@
 --[[
 -- Monolithic class bars plugin for oUF
--- Runes, shards, burning embers, etc.
+-- Runes, shards, etc.
 -- By Kesava at curse.com
 -- All rights reserved
 ]]
@@ -327,16 +327,6 @@ local function UpdateDruidShrooms(self, bar)
     if bar.id > 3 then return end
     UpdateShamanBar(self, bar)
 end
--------------------------------------------------------------- Burning embers --
--- each bar fills to 10
-local function UpdateBurningEmbers(self, event)
-    local power, bpower = UnitPower('player', SPELL_POWER_BURNING_EMBERS, true)
-
-    for k, bar in ipairs(cb.bars) do
-        bpower = power - ((k-1)*10)
-        bar:SetValue(bpower)
-    end
-end
 ---------------------------------------------------------- Shadow priest mana --
 local function UpdateShadowPriestMana(self,event)
     local cur,max =
@@ -627,13 +617,7 @@ local function Enable(self, unit)
         return
     end
 
-    if cb.class == 'WARLOCK' then
-        cb.PowerTypes = {
-            [1] = SPELL_POWER_SOUL_SHARDS,
-            [2] = SPELL_POWER_DEMONIC_FURY,
-            [3] = SPELL_POWER_BURNING_EMBERS
-        }
-    elseif cb.class == 'PRIEST' then
+    if cb.class == 'PRIEST' then
         cb.PowerTypes = {
             [3] = 'mana'
         }
@@ -726,27 +710,11 @@ local function Enable(self, unit)
 ------------------------------------------------------- Create warlock powers --
     elseif cb.class == 'WARLOCK' then
         cb.level = 10
-        cb.types = {
-            [SPELL_POWER_DEMONIC_FURY] = {
-                bars = { [1] = { minmax = { 0, 1000 } } },
-                colour = { .4, 1, 0 },
-                update = { ['f'] = UpdateGenericBar },
-                create = CreateGenericBar,
-                events = { 'UNIT_POWER' }
-            },
-            [SPELL_POWER_BURNING_EMBERS] = {
-                colour = { 1, .3, 0 },
-                update = { ['f'] = UpdateBurningEmbers },
-                create = CreateGenericBar,
-                minmax = { 0, 10 },
-                events = { 'UNIT_POWER' }
-            },
-            [SPELL_POWER_SOUL_SHARDS] = {
-                colour = { .5, 0, 1 },
-                update = { ['f'] = UpdateGeneric },
-                events = { 'UNIT_POWER' }
-            }
-        }
+        cb.type = SPELL_POWER_SOUL_SHARDS
+        cb.o.colour = { .5, 0, 1 }
+
+        cb.o.events = { 'UNIT_POWER' }
+        cb.o.update = { ['f'] = UpdateGeneric }
 ------------------------------------------------------------ Shadow orbs (13) --
     elseif cb.class == 'PRIEST' then
         cb.types = {
