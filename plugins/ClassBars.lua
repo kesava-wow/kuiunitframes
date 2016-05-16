@@ -147,6 +147,16 @@ local function UpdateGeneric(self, event, ...)
         end
     end
 end
+local function UpdateGenericBar(self,event,...)
+    local val = 0
+    if cb.type then
+        val = UnitPower(self.unit, cb.type)
+    else
+        val = cb.event_function(self.unit)
+    end
+
+    cb.bars[1]:SetValue(val)
+end
 ----------------------------------- Update combo points + anticipation stacks --
 local function UpdateComboPoints(self, event, ...)
     if event == 'PLAYER_TALENT_UPDATE' or event == 'PLAYER_ENTERING_WORLD' then
@@ -212,11 +222,6 @@ local function UpdateShamanBar(self, bar)
         HideBar(self, bar)
     end
 end
----------------------------------------------------- Update druid shroom bars --
-local function UpdateDruidShrooms(self, bar)
-    if bar.id > 3 then return end
-    UpdateShamanBar(self, bar)
-end
 ---------------------------------------------------------------- Update Runes --
 local function UpdateDeathKnightBar(self, bar)
     local type, startTime, duration, charged = GetRuneType(bar.id), GetRuneCooldown(bar.id)
@@ -248,7 +253,6 @@ local function UpdateDeathKnightBar(self, bar)
         bar:SetScript('OnUpdate', nil)
     end
 end
-
 ----------------------------------------------------------- Update druid bars --
 local function UpdateDruid(self, event)
     -- Eclipse -----------------------------------------------------------------
@@ -318,9 +322,10 @@ local function UpdateDruid(self, event)
         HideBar(self, cb.bars[5])
     end
 end
----------------------------------------------------------------- Demonic fury --
-local function UpdateDemonicFury(self, event)
-    cb.bars[1]:SetValue(UnitPower('player', SPELL_POWER_DEMONIC_FURY))
+---------------------------------------------------- Update druid shroom bars --
+local function UpdateDruidShrooms(self, bar)
+    if bar.id > 3 then return end
+    UpdateShamanBar(self, bar)
 end
 -------------------------------------------------------------- Burning embers --
 -- each bar fills to 10
@@ -330,6 +335,20 @@ local function UpdateBurningEmbers(self, event)
     for k, bar in ipairs(cb.bars) do
         bpower = power - ((k-1)*10)
         bar:SetValue(bpower)
+    end
+end
+---------------------------------------------------------- Shadow priest mana --
+local function UpdateShadowPriestMana(self,event)
+    local cur,max =
+        UnitPower('player',SPELL_POWER_MANA),
+        UnitPowerMax('player',SPELL_POWER_MANA)
+
+    if cur == max then
+        HideBar(self, cb.bars[1])
+    else
+        ShowBar(self, cb.bars[1])
+        cb.bars[1]:SetMinMaxValues(0,max)
+        cb.bars[1]:SetValue(cur)
     end
 end
 
@@ -556,7 +575,7 @@ local function UpdateObject(self, event, unit, resource)
             cb.o.bars = {}
         end
 
-        resource = cb.type
+        resource = cb.o.resource or cb.type
     end
 
     local powerMax = UnitPowerMax('player', resource)
@@ -616,7 +635,7 @@ local function Enable(self, unit)
         }
     elseif cb.class == 'PRIEST' then
         cb.PowerTypes = {
-            [3] = SPELL_POWER_SHADOW_ORBS
+            [3] = 'mana'
         }
     end
 
@@ -711,7 +730,7 @@ local function Enable(self, unit)
             [SPELL_POWER_DEMONIC_FURY] = {
                 bars = { [1] = { minmax = { 0, 1000 } } },
                 colour = { .4, 1, 0 },
-                update = { ['f'] = UpdateDemonicFury },
+                update = { ['f'] = UpdateGenericBar },
                 create = CreateGenericBar,
                 events = { 'UNIT_POWER' }
             },
@@ -731,10 +750,10 @@ local function Enable(self, unit)
 ------------------------------------------------------------ Shadow orbs (13) --
     elseif cb.class == 'PRIEST' then
         cb.types = {
-            [SPELL_POWER_SHADOW_ORBS] = {
-                colour = { .5, 0, 1 },
-                update = { ['f'] = UpdateGeneric },
-                events = { 'UNIT_POWER' }
+            ['mana'] = {
+                bars = {{ colour = { 78/255, 95/255, 190/255 } }},
+                update = { ['f'] = UpdateShadowPriestMana },
+                events = { 'UNIT_POWER', 'UNIT_POWER_FREQUENT', 'UNIT_MAXPOWER' }
             }
         }
 -------------------------------------------------------------------- Chi (12) --
