@@ -66,7 +66,7 @@ local function CreateStatusBarSpark(bar,no_fade)
     spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
     spark:SetWidth(8)
 
-    if bar.reverser then
+    if bar:GetReverseFill() then
         spark:SetPoint('TOP', texture, 'TOPLEFT', 1, 4)
         spark:SetPoint('BOTTOM', texture, 'BOTTOMLEFT', 1, -4)
     else
@@ -95,15 +95,6 @@ local function StatusText_UpdateTag(self)
         endAlpha = .5,
         timeToFade = .5,
         startDelay = .5,
-        fadeHoldTime = 5,
-        finishedFunc = function(self)
-            kui.frameFade(self, {
-                mode = 'OUT',
-                startAlpha = .5,
-                endAlpha = 0,
-                timeToFade = .5
-            })
-        end
     })
 end
 
@@ -113,7 +104,8 @@ local function Player_OnEnter(self)
     self.Health.status:SetAlpha(1)
 end
 local function Player_OnLeave(self)
-    self.Health.status:SetAlpha(0)
+    kui.frameFadeRemoveFrame(self.Health.status)
+    self.Health.status:SetAlpha(.5)
 end
 --------------------------------------------------- generic background helper --
 local function CreateBackground(self,frame,glow)

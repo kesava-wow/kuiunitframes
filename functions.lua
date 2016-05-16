@@ -176,23 +176,6 @@ do
         self:SetStatusBarColor_(r,g,b)
     end
 
-    local function OnUpdateReverser(self)
-        local tex = self.__owner:GetStatusBarTexture()
-        local max,width,val =
-            select(2, self.__owner:GetMinMaxValues()),
-            self.__owner:GetWidth(),
-            self.__owner:GetValue()
-
-        tex:ClearAllPoints()
-        tex:SetPoint('BOTTOMRIGHT')
-        tex:SetPoint('TOPLEFT', self.__owner, 'TOPRIGHT', -((val/max)*width),0)
-
-        self:Hide()
-    end
-    local function OnChange(self)
-        self.reverser:Show()
-    end
-
     ns.CreateStatusBar = function(parent,reverse)
         local bar = CreateFrame('StatusBar',nil,parent)
         bar:SetStatusBarTexture(texture,'BACKGROUND')
@@ -200,22 +183,12 @@ do
         bar.bg = bar:CreateTexture(nil,'BACKGROUND')
         bar.bg:SetTexture(texture)
         bar.bg:SetAllPoints(bar)
+        bar:SetReverseFill(reverse)
         bar.bg:SetAlpha(.3)
 
         if bar.bg then
             bar.SetStatusBarColor_ = bar.SetStatusBarColor
             bar.SetStatusBarColor = SetKuiStatusBarColor
-        end
-
-        if reverse then
-            bar.reverser = CreateFrame('Frame',nil,bar)
-            bar.reverser:Hide()
-            bar.reverser:SetScript('OnUpdate',OnUpdateReverser)
-            bar.reverser.__owner = bar
-
-            bar:HookScript('OnSizeChanged',OnChange)
-            bar:HookScript('OnValueChanged',OnChange)
-            bar:HookScript('OnMinMaxChanged',OnChange)
         end
 
         return bar
