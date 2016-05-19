@@ -211,10 +211,8 @@ local function UpdateShamanBar(self, bar)
 end
 ---------------------------------------------------------------- Update Runes --
 local function UpdateDeathKnightBar(self, bar)
-    local type, startTime, duration, charged = GetRuneType(bar.id), GetRuneCooldown(bar.id)
-    if not type then return end
+    local startTime, duration, charged = GetRuneCooldown(bar.id)
 
-    bar:SetStatusBarColor(unpack(self.ClassBars.colours[type]))
     bar.tl = startTime + duration - GetTime()
 
     if not charged then
@@ -645,19 +643,9 @@ local function Enable(self, unit)
         cb.o.tooltip = ShamanTooltip
 ------------------------------------------------------------ Create Runes --
     elseif cb.class == 'DEATHKNIGHT' then
-        cb.o.bars = {
-            [1] = {}, [2] = {},
-            [3] = { id = 5 }, [4] = { id = 6 },
-            [5] = { id = 3 }, [6] = { id = 4 },
-        }
-        cb.o.events = { 'RUNE_POWER_UPDATE', 'RUNE_TYPE_UPDATE' }
-
-        cb.colours = {
-            [1] = { .7, 0, 0 },     -- blood
-            [2] = { .3, .7, 0 },    -- unholy
-            [3] = { .2, .2, .8 },   -- frost
-            [4] = { 1, .5, 0 }      -- death
-        }
+        cb.o.bars = {{},{},{},{},{},{}}
+        cb.o.events = { 'RUNE_POWER_UPDATE' }
+        cb.o.colour = { .2, .2, .8 }
 
         cb.o.create = function(self)
             RuneFrame:Hide()
