@@ -366,6 +366,34 @@ local function CreateEclipseBar(self)
 
     CreateGenericBar(self)
 end
+-------------------------------------------------------------- update stagger --
+local function CreateMonkStagger(self)
+    CreateGenericBar(self)
+    cb.colours = {
+        {.52,1,.52},
+        {1,.98,.72},
+        {1,.42,.42}
+    }
+end
+local function UpdateMonkStagger(self,event)
+    local max = UnitHealthMax('player')
+    local cur = UnitStagger('player')
+    local per = cur / max
+
+    cb.bars[1]:SetMinMaxValues(0,max)
+    cb.bars[1]:SetValue(cur)
+
+    if per > STAGGER_RED_TRANSITION then
+        cb.bars[1]:SetStatusBarColor(unpack(cb.colours[3]))
+    elseif per > STAGGER_YELLOW_TRANSITION then
+        cb.bars[1]:SetStatusBarColor(unpack(cb.colours[2]))
+    else
+        cb.bars[1]:SetStatusBarColor(unpack(cb.colours[1]))
+    end
+
+    cb.bars[1].col:SetVertexColor(cb.bars[1]:GetStatusBarColor())
+    cb.bars[1].col:SetAlpha(.2)
+end
 
 --[[--------------------------------------------------------- Update function --
     Calls cb.o.update.f(self)
@@ -606,6 +634,12 @@ local function Enable(self, unit)
         cb.PowerTypes = {
             [3] = 'mana'
         }
+    elseif cb.class == 'MONK' then
+        cb.PowerTypes = {
+            [1] = 'stagger',
+            [2] = SPELL_POWER_CHI,
+            [3] = SPELL_POWER_CHI
+        }
     end
 
     -- create container
@@ -701,12 +735,19 @@ local function Enable(self, unit)
         }
 -------------------------------------------------------------------- Chi (12) --
     elseif cb.class == 'MONK' then
-        cb.type = SPELL_POWER_CHI
-
-        cb.o.colour = { .5, 1, 1 }
-
-        cb.o.events = { 'UNIT_POWER' }
-        cb.o.update = { ['f'] = UpdateGeneric }
+        cb.types = {
+            ['stagger'] = {
+                bars   = {{}},
+                create = CreateMonkStagger,
+                update = { ['f'] = UpdateMonkStagger },
+                events = { 'UNIT_MAXHEALTH', 'UNIT_POWER', 'UNIT_POWER_FREQUENT' }
+            },
+            [SPELL_POWER_CHI] = {
+                colour = { .5, 1, 1 },
+                update = { ['f'] = UpdateGeneric },
+                events = { 'UNIT_POWER', 'UNIT_POWER_FREQUENT' }
+            }
+        }
 ---------------------------------------------------------------- combo points --
     elseif cb.class == 'ROGUE' then
         cb.type = SPELL_POWER_COMBO_POINTS
