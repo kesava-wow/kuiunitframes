@@ -156,6 +156,20 @@ local function UpdateGenericBar(self,event,...)
 
     cb.bars[1]:SetValue(val)
 end
+-- generic mana update
+local function UpdateManaBar(self,bar)
+    local cur,max =
+        UnitPower(self.unit,SPELL_POWER_MANA),
+        UnitPowerMax(self.unit,SPELL_POWER_MANA)
+
+    if cur == max then
+        HideBar(self, bar)
+    else
+        ShowBar(self, bar)
+        bar:SetMinMaxValues(0,max)
+        bar:SetValue(cur)
+    end
+end
 ----------------------------------- Update combo points + anticipation stacks --
 local function UpdateComboPoints(self, event, ...)
     local cur = UnitPower('player',SPELL_POWER_COMBO_POINTS)
@@ -240,72 +254,7 @@ local function UpdateDeathKnightBar(self, bar)
 end
 ----------------------------------------------------------- Update druid bars --
 local function UpdateDruid(self, event)
-    -- Eclipse -----------------------------------------------------------------
-    if  event == 'UPDATE_SHAPESHIFT_FORM' or
-        event == 'PLAYER_ENTERING_WORLD' or
-        not event
-    then
-        -- toggle bars depending on form
-        if GetShapeshiftFormID() == MOONKIN_FORM then
-            ShowBar(self, cb.bars[4])
-        else
-            HideBar(self, cb.bars[4])
-        end
-    end
-
-    if cb.bars[4].bg:IsShown() then
-        -- set colour based on current direction
-        local curr = UnitPower('player', SPELL_POWER_ECLIPSE)
-        cb.bars[4]:SetValue(curr < 0 and -curr or curr)
-
-        if curr > 0 then
-            -- solar
-            cb.bars[4]:SetStatusBarColor(238/255, 200/255, 77/255)
-            cb.bars[4].col:SetVertexColor(238/255, 200/255, 77/255, .2)
-        else
-            -- lunar
-            cb.bars[4]:SetStatusBarColor(60/255, 150/255, 220/255)
-            cb.bars[4].col:SetVertexColor(60/255, 150/255, 220/255, .2)
-        end
-
-        -- get eclipse status
-        local hasEclipse = false
-        for i=0,40 do
-            local _,_,_,_,_,_,_,_,_,_, spellID = UnitBuff('player', i)
-
-            if spellID == ECLIPSE_BAR_SOLAR_BUFF_ID then
-                hasEclipse = { 238/255, 200/255, 77/255, .5 }
-                break
-            elseif spellID == ECLIPSE_BAR_LUNAR_BUFF_ID then
-                hasEclipse = { 60/255, 150/255, 220/255, .5 }
-                break
-            end
-        end
-
-        if hasEclipse then
-            cb.bars[4].bg:SetBackdropBorderColor(unpack(hasEclipse))
-        else
-            cb.bars[4].bg:SetBackdropBorderColor(0,0,0,0)
-        end
-    end
-
-    -- Mana --------------------------------------------------------------------
-    local shown = false
-    if UnitPowerType('player') ~= 0 then
-        local curr, max =
-            UnitPower('player', 0), UnitPowerMax('player', 0)
-
-        if curr ~= max then
-            cb.bars[5]:SetMinMaxValues(0, max)
-            cb.bars[5]:SetValue(curr)
-            ShowBar(self, cb.bars[5])
-            shown = true
-        end
-    end
-
-    if not shown and cb.bars[5].bg:IsShown() then
-        HideBar(self, cb.bars[5])
-    end
+    UpdateManaBar(self,cb.bars[4])
 end
 ---------------------------------------------------- Update druid shroom bars --
 local function UpdateDruidShrooms(self, bar)
@@ -314,17 +263,7 @@ local function UpdateDruidShrooms(self, bar)
 end
 ---------------------------------------------------------- Shadow priest mana --
 local function UpdateShadowPriestMana(self,event)
-    local cur,max =
-        UnitPower('player',SPELL_POWER_MANA),
-        UnitPowerMax('player',SPELL_POWER_MANA)
-
-    if cur == max then
-        HideBar(self, cb.bars[1])
-    else
-        ShowBar(self, cb.bars[1])
-        cb.bars[1]:SetMinMaxValues(0,max)
-        cb.bars[1]:SetValue(cur)
-    end
+    UpdateManaBar(self,cb.bars[1])
 end
 
 ------------------------------------------------------- Post-create functions --
@@ -400,11 +339,7 @@ end
     Calls cb.o.update.b(self, bar) for each bar created by Create()
 ]]
 local function Update(self, event, ...)
-    if event == 'UNIT_POWER' or
-       event == 'UNIT_POWER_FREQUENT' or
-       event == 'UNIT_AURA' or
-       event == 'UNIT_COMBO_POINTS'
-    then
+    if strmatch(event,'^UNIT_') then
         local unit = ...
         if unit ~= self.unit then return end
     end
@@ -522,8 +457,10 @@ local function CreateBars(self)
     end
 
     -- register container events
-    for k, e in pairs(cb.o.events) do
-        cb.container:RegisterEvent(e)
+    if type(cb.o.events) == 'table' then
+        for k, e in pairs(cb.o.events) do
+            cb.container:RegisterEvent(e)
+        end
     end
 
     -- call post create
@@ -693,17 +630,15 @@ local function Enable(self, unit)
         cb.o.rows = 1
         cb.o.groups = { [1] = { rows = 1 }, [2] = { rows = 3 } }
         cb.o.bars = {
-            [1] = { group = 2, colour = { 0, 1, .6 } },
+            [1] = { group = 2, colour = { 0, 1, .6 } }, -- mushrooms
             [2] = { group = 2, colour = { 0, 1, .6 } },
             [3] = { group = 2, colour = { 0, 1, .6 } },
-            [4] = { group = 1, colour = { 111/255, 186/255, 245/255 }, minmax = { 0, 100 } }, -- lunar
-            [5] = { group = 1, colour = { 78/255, 95/255, 190/255 } }, -- mana
+            [4] = { group = 1, colour = { 78/255, 95/255, 190/255 } }, -- mana
         }
         cb.o.events = {
             'PLAYER_TOTEM_UPDATE',
             'UPDATE_SHAPESHIFT_FORM',
-            'ECLIPSE_DIRECTION_CHANGE',
-            'UNIT_POWER', 'UNIT_MAXPOWER', 'UNIT_AURA'
+            'UNIT_AURA'
         }
 
         cb.o.create = CreateEclipseBar
@@ -714,7 +649,6 @@ local function Enable(self, unit)
         cb.type = SPELL_POWER_HOLY_POWER
         cb.o.colour = { 1, 1, 0 }
 
-        cb.o.events = { 'UNIT_POWER' }
         cb.o.update = { ['f'] = UpdateGeneric }
 ------------------------------------------------------- Create warlock powers --
     elseif cb.class == 'WARLOCK' then
@@ -722,7 +656,6 @@ local function Enable(self, unit)
         cb.type = SPELL_POWER_SOUL_SHARDS
         cb.o.colour = { .5, 0, 1 }
 
-        cb.o.events = { 'UNIT_POWER' }
         cb.o.update = { ['f'] = UpdateGeneric }
 ------------------------------------------------------------ Shadow orbs (13) --
     elseif cb.class == 'PRIEST' then
@@ -730,7 +663,6 @@ local function Enable(self, unit)
             ['mana'] = {
                 bars = {{ colour = { 78/255, 95/255, 190/255 } }},
                 update = { ['f'] = UpdateShadowPriestMana },
-                events = { 'UNIT_POWER', 'UNIT_POWER_FREQUENT', 'UNIT_MAXPOWER' }
             }
         }
 -------------------------------------------------------------------- Chi (12) --
@@ -740,12 +672,11 @@ local function Enable(self, unit)
                 bars   = {{}},
                 create = CreateMonkStagger,
                 update = { ['f'] = UpdateMonkStagger },
-                events = { 'UNIT_MAXHEALTH', 'UNIT_POWER', 'UNIT_POWER_FREQUENT' }
+                events = { 'UNIT_MAXHEALTH' }
             },
             [SPELL_POWER_CHI] = {
                 colour = { .5, 1, 1 },
                 update = { ['f'] = UpdateGeneric },
-                events = { 'UNIT_POWER', 'UNIT_POWER_FREQUENT' }
             }
         }
 ---------------------------------------------------------------- combo points --
@@ -753,7 +684,6 @@ local function Enable(self, unit)
         cb.type = SPELL_POWER_COMBO_POINTS
         cb.o.bars =   { {},{},{},{},{} }
         cb.o.colour = { 1,1,.1 }
-        cb.o.events = { 'UNIT_POWER', 'UNIT_MAXPOWER', 'PLAYER_TALENT_UPDATE' }
         cb.o.update = { ['f'] = UpdateComboPoints }
     end
 
@@ -763,6 +693,9 @@ local function Enable(self, unit)
         self:RegisterEvent('UNIT_MAXPOWER', UpdateObject)
         self:RegisterEvent('PLAYER_TALENT_UPDATE', UpdateObject)
     end
+
+    cb.container:RegisterEvent('UNIT_POWER')
+    cb.container:RegisterEvent('UNIT_POWER_FREQUENT')
 
     if cb.type or cb.types then
         UpdateObject(self) -- parse object
