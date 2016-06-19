@@ -313,6 +313,7 @@ local function CreateMonkStagger(self)
         {1,.98,.72},
         {1,.42,.42}
     }
+    cb.bars[1].bg:SetAlpha(1)
 end
 local function UpdateMonkStagger(self,event)
     local max = UnitHealthMax('player')
@@ -339,7 +340,7 @@ end
     Calls cb.o.update.b(self, bar) for each bar created by Create()
 ]]
 local function Update(self, event, ...)
-    if strmatch(event,'^UNIT_') then
+    if event and strmatch(event,'^UNIT_') then
         local unit = ...
         if unit ~= self.unit then return end
     end
