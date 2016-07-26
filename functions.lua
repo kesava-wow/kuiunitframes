@@ -22,8 +22,8 @@ do
         ['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
         ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
-        ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -122 } },
-        ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, -13, -90 } },
+        ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -222 } },
+        ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, -13, -190 } },
     }
 
     local SetPoint = function(frame,point_tbl)
