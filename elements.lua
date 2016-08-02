@@ -423,6 +423,7 @@ function ns.CreateMainElements(self)
 
     self.KuiAbsorb = {
         texture = 'Interface\\AddOns\\Kui_RaidFrames\\media\\stippled-bar',
+        tile = true,
         drawLayer = { 'BACKGROUND', 4 },
         colour = { .3, .7, 1 },
         alpha = .5
