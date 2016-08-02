@@ -176,6 +176,46 @@ local function CreatePortrait(self)
     self.Health:SetFrameLevel(2)
     self.Portrait:SetFrameLevel(1)
 end
+------------------------------------------------------------- heal prediction --
+local function CreateHealPrediction(self)
+    local width = 55 - 2
+    local texture = 'Interface\\AddOns\\Kui_Media\\t\\bar'
+
+    local myBar = CreateFrame('StatusBar', nil, self.Health)
+    myBar:SetStatusBarTexture(texture)
+    myBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',2)
+    myBar:SetPoint('TOP')
+    myBar:SetPoint('BOTTOM')
+    myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    myBar:SetStatusBarColor(0,1,.5,.5)
+    myBar:SetWidth(width)
+
+    local otherBar = CreateFrame('StatusBar', nil, self.Health)
+    otherBar:SetStatusBarTexture(texture)
+    otherBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',3)
+    otherBar:SetPoint('TOP')
+    otherBar:SetPoint('BOTTOM')
+    otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    otherBar:SetStatusBarColor(0,1,0,.5)
+    otherBar:SetWidth(width)
+
+    local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
+    healAbsorbBar:SetStatusBarTexture(texture)
+    healAbsorbBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',5)
+    healAbsorbBar:SetPoint('TOP')
+    healAbsorbBar:SetPoint('BOTTOM')
+    healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    healAbsorbBar:SetStatusBarColor(0,0,0,.5)
+    healAbsorbBar:SetWidth(width)
+
+    self.HealPrediction = {
+        myBar = myBar,
+        otherBar = otherBar,
+        healAbsorbBar = healAbsorbBar,
+        maxOverflow = 1.05,
+        frequentUpdates = true
+    }
+end
 -------------------------------------------------------------------- cast bar --
 local function CreateCastBar(self)
     local bar = ns.CreateStatusBar(self,self.unit=='target')
@@ -381,8 +421,16 @@ function ns.CreateMainElements(self)
     self.overlay:SetFrameLevel(7)
     self.overlay:SetAllPoints(self)
 
+    self.KuiAbsorb = {
+        texture = 'Interface\\AddOns\\Kui_RaidFrames\\media\\stippled-bar',
+        drawLayer = { 'BACKGROUND', 4 },
+        colour = { .3, .7, 1 },
+        alpha = .5
+    }
+
     CreateHealthBar(self)
     CreatePortrait(self)
+    CreateHealPrediction(self)
 
     if self.unit ~= 'targettarget' then
         CreateHealthText(self)
