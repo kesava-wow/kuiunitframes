@@ -673,7 +673,7 @@ local function Enable(self, unit)
                 bars   = {{}},
                 create = CreateMonkStagger,
                 update = { ['f'] = UpdateMonkStagger },
-                events = { 'UNIT_MAXHEALTH' }
+                events = { 'UNIT_MAXHEALTH', 'UNIT_ABSORB_AMOUNT_CHANGED' }
             },
             [SPELL_POWER_CHI] = {
                 colour = { .5, 1, 1 },
