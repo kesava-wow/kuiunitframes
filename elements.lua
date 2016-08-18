@@ -188,7 +188,6 @@ local function CreateHealPrediction(self)
     myBar:SetPoint('BOTTOM')
     myBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
     myBar:SetStatusBarColor(0,1,.5,.5)
-    myBar:SetWidth(width)
 
     local otherBar = CreateFrame('StatusBar', nil, self.Health)
     otherBar:SetStatusBarTexture(texture)
@@ -197,7 +196,6 @@ local function CreateHealPrediction(self)
     otherBar:SetPoint('BOTTOM')
     otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
     otherBar:SetStatusBarColor(0,1,0,.5)
-    otherBar:SetWidth(width)
 
     local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
     healAbsorbBar:SetStatusBarTexture(texture)
@@ -206,7 +204,14 @@ local function CreateHealPrediction(self)
     healAbsorbBar:SetPoint('BOTTOM')
     healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
     healAbsorbBar:SetStatusBarColor(0,0,0,.5)
-    healAbsorbBar:SetWidth(width)
+
+    self.Health:HookScript('OnSizeChanged',function(bar,width)
+        -- width is set by functions.lua:SetFrameGeometry, and we can't just
+        -- set the RIGHT point
+        myBar:SetWidth(width)
+        otherBar:SetWidth(width)
+        healAbsorbBar:SetWidth(width)
+    end)
 
     self.HealPrediction = {
         myBar = myBar,
