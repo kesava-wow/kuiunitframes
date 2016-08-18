@@ -148,7 +148,7 @@ local function CreateHealthBar(self)
     self.Health:SetStatusBarColor(.59,.05,.05)
 
     self.Health.frequentUpdates = true
-    self.Health.Smooth = true
+    self.Health.Cutaway = true
 
     if self.unit == 'player' then
         -- also make spark
@@ -288,10 +288,10 @@ local function CreatePowerBar(self)
     -- mana bar location is different per-layout
 
     self.Power.frequentUpdates = true
-    self.Power.Smooth = true
     self.Power.colorDisconnected = true
     self.Power.colorTapping = true
     self.Power.colorPower = true
+    self.Power.Cutaway = true
 
     if self.unit == 'player' then
         -- power text

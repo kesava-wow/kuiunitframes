@@ -11,3 +11,4 @@ elements.lua
 layout.lua
 
 plugins\ClassBars.lua
+plugins\Cutaway.lua
