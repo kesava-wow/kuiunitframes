@@ -59,12 +59,12 @@ do
 
     local text_geo = {
         ['default'] = {
-            ['name'] = { 'TOP',  0, 5 },
+            ['name'] = { 'TOP',  0, 6 },
             ['health'] = { 'RIGHT', -5, 0 },
             ['curhp'] = { 'LEFT', 5, 0 },
         },
         ['targettarget'] = {
-            ['name'] = { 'TOP', 0, 3 }
+            ['name'] = { 'TOP', 0, 5 }
         },
         ['player'] = {
             ['cast_name'] = { 'LEFT',   5, 0 },
@@ -76,7 +76,7 @@ do
             ['cast_time'] = { 'LEFT',   5, 0 },
         },
     }
-    local text_font_face = kui.m.f.francois
+    local text_font_face = kui.m.f.roboto
     local text_font_outline = 'THINOUTLINE'
     local text_font_size = 10
     local text_font = {
