@@ -141,23 +141,35 @@ local function CreateBackground(self,frame,glow)
     return frame
 end
 ------------------------------------------------------------------ health bar --
-local function CreateHealthBar(self)
-    self.Health = ns.CreateStatusBar(self)
-    self.Health:SetPoint('TOPLEFT',1,-1)
-    self.Health:SetPoint('BOTTOMRIGHT',-1,1)
-    self.Health:SetStatusBarColor(.59,.05,.05)
+local CreateHealthBar
+do
+    local function Health_PostUpdate(bar,unit,min,max)
+        if UnitHealth(unit) == max then
+            bar:SetStatusBarColor_(0,0,0,0)
+        end
+    end
+    function CreateHealthBar(self)
+        self.Health = ns.CreateStatusBar(self)
+        self.Health:SetPoint('TOPLEFT',1,-1)
+        self.Health:SetPoint('BOTTOMRIGHT',-1,1)
+        self.Health:SetStatusBarColor(.59,.05,.05)
 
-    self.Health.frequentUpdates = true
-    self.Health.Cutaway = true
+        self.Health.frequentUpdates = true
+        self.Health.Cutaway = true
 
-    if self.unit == 'player' then
-        -- also make spark
-        CreateStatusBarSpark(self.Health)
-    else
-        self.Health.colorReaction = true
-        self.Health.colorClass = true
-        self.Health.colorDisconnected = true
-        self.Health.colorTapping = true
+        if self.unit == 'player' then
+            -- also make spark
+            CreateStatusBarSpark(self.Health)
+        else
+            self.Health.colorReaction = true
+            self.Health.colorClass = true
+            self.Health.colorDisconnected = true
+            self.Health.colorTapping = true
+
+            if self.unit == 'target' then
+                self.Health.PostUpdate = Health_PostUpdate
+            end
+        end
     end
 end
 -------------------------------------------------------------------- portrait --
