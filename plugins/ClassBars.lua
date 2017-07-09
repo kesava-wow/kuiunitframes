@@ -519,7 +519,12 @@ local function UpdateObject(self, event, unit, resource)
         resource = cb.o.resource or cb.type
     end
 
-    local powerMax = UnitPowerMax('player', resource)
+    if resource == 'mana' then resource = SPELL_POWER_MANA end
+
+    local powerMax
+    if resource ~= 'stagger' then
+        powerMax = UnitPowerMax('player', resource)
+    end
 
     if cb.bars then
         -- cycle existing bars to destroy (in case powerMax has decreased)
