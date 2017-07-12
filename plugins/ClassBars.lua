@@ -622,7 +622,7 @@ local function Enable(self, unit)
     elseif cb.class == 'DEATHKNIGHT' then
         cb.o.bars = {{},{},{},{},{},{}}
         cb.o.events = { 'RUNE_POWER_UPDATE' }
-        cb.o.colour = { .2, .2, .8 }
+        cb.o.colour = { .4, .4, 1 }
 
         cb.o.create = function(self)
             RuneFrame:Hide()
