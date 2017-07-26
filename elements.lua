@@ -448,7 +448,7 @@ function ns.CreateMainElements(self)
         CreateNameText(self)
     end
 
-    if self.unit == 'player' or self.unit == 'target' then
+    if self.unit == 'player' or self.unit == 'target' or self.unit == 'focus' then
         CreateCastBar(self)
     end
 

@@ -16,6 +16,8 @@ do
         ['targettarget'] = { 100, 16 },
         ['player_castbar'] = { 168, 24 },
         ['target_castbar'] = { 215, 24 },
+        ['focus'] = { 100, 30 },
+        ['focus_castbar'] = { 98, 30 },
     }
     local geometry = { -- positions
         ['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
@@ -24,6 +26,8 @@ do
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
         ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -222 } },
         ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, -13, -190 } },
+        ['focus'] = { 'focus', { 'CENTER', 0, 200 } },
+        ['focus_castbar'] = { 'focus_castbar', { 'TOPLEFT', 'oUF_KuitwoMainFocus', 'BOTTOMLEFT', 1, -2 } },
     }
 
     local SetPoint = function(frame,point_tbl)
@@ -62,13 +66,13 @@ do
             ['name'] = { 'TOP',  0, 6 },
             ['health'] = { 'RIGHT', -5, 0 },
             ['curhp'] = { 'LEFT', 5, 0 },
+            ['cast_name'] = { 'LEFT',   5, 0 },
+            ['cast_time'] = { 'RIGHT', -5, 0 },
         },
         ['targettarget'] = {
             ['name'] = { 'TOP', 0, 5 }
         },
         ['player'] = {
-            ['cast_name'] = { 'LEFT',   5, 0 },
-            ['cast_time'] = { 'RIGHT', -5, 0 },
             ['status'] = { 'LEFT', 5, 0 },
         },
         ['target'] = {
