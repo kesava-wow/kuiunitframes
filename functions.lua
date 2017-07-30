@@ -76,6 +76,8 @@ do
             ['status'] = { 'LEFT', 5, 0 },
         },
         ['target'] = {
+            ['health'] = { 'RIGHT', 'Health', 'RIGHT', -5, 0 },
+            ['curhp'] = { 'LEFT', 'Health', 'LEFT', 5, 0 },
             ['cast_name'] = { 'RIGHT', -5, 0 },
             ['cast_time'] = { 'LEFT',   5, 0 },
         },
@@ -103,12 +105,21 @@ do
         end
 
         local point,relpoint
-
         if type(geotable[1]) == 'table' then
             point = geotable[1]
             relpoint = geotable[2]
         else
             point = geotable
+        end
+
+        -- anchor to other elements within frame by passing table key
+        for _,t in pairs({point,relpoint}) do
+            if  type(t) == 'table' and
+                type(t[2]) == 'string' and
+                frame[t[2]]
+            then
+                t[2] = frame[t[2]]
+            end
         end
 
         text:ClearAllPoints()
