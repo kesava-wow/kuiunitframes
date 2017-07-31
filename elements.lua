@@ -283,8 +283,8 @@ local function CreateCastBar(self)
     end
 end
 ------------------------------------------------------------------------ mana --
-local function CreatePowerBar(self)
-    self.Power = ns.CreateStatusBar(self)
+local function CreatePowerBar(self,reverse)
+    self.Power = ns.CreateStatusBar(self,reverse)
     -- mana bar location is different per-layout
 
     self.Power.frequentUpdates = true
@@ -406,8 +406,7 @@ local function CreatePlayerElements(self)
     powerbg.framekey = 'player_power'
     ns.SetFrameGeometry(powerbg)
 
-    CreatePowerBar(self)
-    self.Power:SetReverseFill(true)
+    CreatePowerBar(self,true)
     self.Power:SetFrameLevel(powerbg:GetFrameLevel()+1)
     self.Power:SetPoint('TOPLEFT',powerbg,1,-1)
     self.Power:SetPoint('BOTTOMRIGHT',powerbg,-1,1)
@@ -455,7 +454,6 @@ function ns.CreateMainElements(self)
 
     if self.unit == 'target' then
         CreateAuras(self)
-
         CreatePowerBar(self)
 
         self.Health:SetPoint('BOTTOMRIGHT',-1,5)
