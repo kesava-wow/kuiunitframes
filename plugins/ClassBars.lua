@@ -159,8 +159,8 @@ end
 -- generic mana update
 local function UpdateManaBar(self,bar)
     local cur,max =
-        UnitPower(self.unit,SPELL_POWER_MANA),
-        UnitPowerMax(self.unit,SPELL_POWER_MANA)
+        UnitPower(self.unit,Enum.PowerType.Mana),
+        UnitPowerMax(self.unit,Enum.PowerType.Mana)
 
     if cur == max then
         HideBar(self, bar)
@@ -172,7 +172,7 @@ local function UpdateManaBar(self,bar)
 end
 ----------------------------------- Update combo points + anticipation stacks --
 local function UpdateComboPoints(self, event, ...)
-    local cur = UnitPower('player',SPELL_POWER_COMBO_POINTS)
+    local cur = UnitPower('player',Enum.PowerType.ComboPoints)
 
     for i,bar in ipairs(cb.bars) do
         if cur >= i then
@@ -486,11 +486,6 @@ local function UpdateObject(self, event, unit, resource)
 
     if event == 'UNIT_MAXPOWER' then
         if unit ~= 'player' then return end
-        resource = _G['SPELL_POWER_'..resource]
-
-        if resource ~= cb.type then
-            return
-        end
     else
         -- power type has changed, or set up for initial display
         --print('Power type update (or initial call)')
@@ -515,11 +510,12 @@ local function UpdateObject(self, event, unit, resource)
             cb.o.dynamic = true
             cb.o.bars = {}
         end
-
-        resource = cb.o.resource or cb.type
     end
 
-    if resource == 'mana' then resource = SPELL_POWER_MANA end
+    resource = cb.o.resource or cb.type
+
+    if not resource then print('no resource') end
+    if resource == 'mana' then resource = Enum.PowerType.Mana end
 
     local powerMax
     if resource ~= 'stagger' then
@@ -580,8 +576,8 @@ local function Enable(self, unit)
     elseif cb.class == 'MONK' then
         cb.PowerTypes = {
             [1] = 'stagger',
-            [2] = SPELL_POWER_CHI,
-            [3] = SPELL_POWER_CHI
+            [2] = Enum.PowerType.Chi,
+            [3] = Enum.PowerType.Chi
         }
     end
 
@@ -652,14 +648,14 @@ local function Enable(self, unit)
         cb.o.tooltip = ShamanTooltip
 ----------------------------------------------------------- Create holy power --
     elseif cb.class == 'PALADIN' then
-        cb.type = SPELL_POWER_HOLY_POWER
+        cb.type = Enum.PowerType.HolyPower
         cb.o.colour = { 1, 1, 0 }
 
         cb.o.update = { ['f'] = UpdateGeneric }
 ------------------------------------------------------- Create warlock powers --
     elseif cb.class == 'WARLOCK' then
         cb.level = 10
-        cb.type = SPELL_POWER_SOUL_SHARDS
+        cb.type = Enum.PowerType.SoulShards
         cb.o.colour = { .5, 0, 1 }
 
         cb.o.update = { ['f'] = UpdateGeneric }
@@ -680,14 +676,14 @@ local function Enable(self, unit)
                 update = { ['f'] = UpdateMonkStagger },
                 events = { 'UNIT_MAXHEALTH', 'UNIT_ABSORB_AMOUNT_CHANGED' }
             },
-            [SPELL_POWER_CHI] = {
+            [Enum.PowerType.Chi] = {
                 colour = { .5, 1, 1 },
                 update = { ['f'] = UpdateGeneric },
             }
         }
 ---------------------------------------------------------------- combo points --
     elseif cb.class == 'ROGUE' then
-        cb.type = SPELL_POWER_COMBO_POINTS
+        cb.type = Enum.PowerType.ComboPoints
         cb.o.bars =   { {},{},{},{},{} }
         cb.o.colour = { 1,1,.1 }
         cb.o.update = { ['f'] = UpdateComboPoints }
@@ -700,7 +696,7 @@ local function Enable(self, unit)
         self:RegisterEvent('PLAYER_TALENT_UPDATE', UpdateObject)
     end
 
-    cb.container:RegisterEvent('UNIT_POWER')
+    cb.container:RegisterEvent('UNIT_POWER_UPDATE')
     cb.container:RegisterEvent('UNIT_POWER_FREQUENT')
 
     if cb.type or cb.types then

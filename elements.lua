@@ -427,7 +427,7 @@ function ns.CreateMainElements(self)
     self.overlay:SetAllPoints(self)
 
     self.KuiAbsorb = {
-        texture = 'Interface\\AddOns\\Kui_RaidFrames\\media\\stippled-bar',
+        texture = 'Interface\\AddOns\\Kui_Media\\t\\stippled-bar',
         tile = true,
         drawLayer = { 'BACKGROUND', 4 },
         colour = { .3, .7, 1 },
@@ -436,7 +436,7 @@ function ns.CreateMainElements(self)
 
     CreateHealthBar(self)
     CreatePortrait(self)
-    CreateHealPrediction(self)
+    --CreateHealPrediction(self) -- TODO broken textures
 
     if self.unit ~= 'targettarget' then
         CreateHealthText(self)
