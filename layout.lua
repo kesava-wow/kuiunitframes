@@ -63,7 +63,7 @@ oUF:Factory(function(self)
     oUF.Tags.Methods['kui:pp'] = function(u,r)
         return kui.num(UnitPower(u or r))
     end
-    oUF.Tags.Events['kui:pp'] = 'UNIT_POWER UNIT_POWER_FREQUENT'
+    oUF.Tags.Events['kui:pp'] = 'UNIT_POWER_UPDATE UNIT_POWER_FREQUENT'
     oUF.Tags.Methods['kui:status'] = function()
         local final
         if UnitAffectingCombat('player') then
@@ -74,7 +74,7 @@ oUF:Factory(function(self)
             final = (final and final..' ' or '')..'|cffffffaarst|r'
         end
 
-        if UnitIsPVP('player') and GetPVPDesired() == 0 then
+        if UnitIsPVP('player') and not GetPVPDesired() then
             if IsPVPTimerRunning() then
                 local timer = math.floor(GetPVPTimer() / 1000)
                 final = (final and final..' ' or '')..
