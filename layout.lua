@@ -67,11 +67,11 @@ oUF:Factory(function(self)
     oUF.Tags.Methods['kui:status'] = function()
         local final
         if UnitAffectingCombat('player') then
-            final = '|cffffaaaacbt|r'
+            final = '|cffffaaaacombat|r'
         end
 
         if IsResting() then
-            final = (final and final..' ' or '')..'|cffffffaarst|r'
+            final = (final and final..' ' or '')..'|cffffffaaresting|r'
         end
 
         if UnitIsPVP('player') and not GetPVPDesired() then
