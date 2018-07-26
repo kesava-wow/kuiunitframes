@@ -177,7 +177,7 @@ local function CreatePortrait(self)
     self.Portrait:SetFrameLevel(1)
 end
 ------------------------------------------------------------- heal prediction --
-local function CreateHealPrediction(self)
+local function CreateHealthPrediction(self)
     local width = 55 - 2
     local texture = 'Interface\\AddOns\\Kui_Media\\t\\bar'
 
@@ -194,7 +194,7 @@ local function CreateHealPrediction(self)
     otherBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',3)
     otherBar:SetPoint('TOP')
     otherBar:SetPoint('BOTTOM')
-    otherBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    otherBar:SetPoint('LEFT', myBar:GetStatusBarTexture(), 'RIGHT')
     otherBar:SetStatusBarColor(0,1,0,.5)
 
     local healAbsorbBar = CreateFrame('StatusBar', nil, self.Health)
@@ -202,8 +202,9 @@ local function CreateHealPrediction(self)
     healAbsorbBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',5)
     healAbsorbBar:SetPoint('TOP')
     healAbsorbBar:SetPoint('BOTTOM')
-    healAbsorbBar:SetPoint('LEFT', self.Health:GetStatusBarTexture(), 'RIGHT')
+    healAbsorbBar:SetPoint('RIGHT', self.Health:GetStatusBarTexture())
     healAbsorbBar:SetStatusBarColor(0,0,0,.5)
+    healAbsorbBar:SetReverseFill(true)
 
     self.Health:HookScript('OnSizeChanged',function(bar,width)
         -- width is set by functions.lua:SetFrameGeometry, and we can't just
@@ -213,7 +214,7 @@ local function CreateHealPrediction(self)
         healAbsorbBar:SetWidth(width)
     end)
 
-    self.HealPrediction = {
+    self.HealthPrediction = {
         myBar = myBar,
         otherBar = otherBar,
         healAbsorbBar = healAbsorbBar,
@@ -436,7 +437,7 @@ function ns.CreateMainElements(self)
 
     CreateHealthBar(self)
     CreatePortrait(self)
-    CreateHealPrediction(self)
+    CreateHealthPrediction(self)
 
     if self.unit ~= 'targettarget' then
         CreateHealthText(self)
