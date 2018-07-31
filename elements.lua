@@ -107,6 +107,25 @@ local function Player_OnLeave(self)
     kui.frameFadeRemoveFrame(self.Health.status)
     self.Health.status:SetAlpha(.5)
 end
+-- event stuff #################################################################
+-- hide power bar on units with no power
+local function Frame_Power_MinMaxChanged(self)
+    if not self:GetParent().unit then return end
+
+    local f = self:GetParent()
+    if UnitPowerMax(f.unit) <= 0 then
+        f.Power:Hide()
+        f.Health:SetPoint('BOTTOMRIGHT',-1,1)
+    else
+        f.Power:Show()
+        f.Health:SetPoint('BOTTOMRIGHT',-1,5)
+    end
+end
+local function AttachEvents(self)
+    if self.unit ~= 'target' then return end
+    if not self.Power then return end
+    self.Power:HookScript('OnMinMaxChanged',Frame_Power_MinMaxChanged)
+end
 --------------------------------------------------- generic background helper --
 local function CreateBackground(self,frame,glow)
     if frame then
@@ -457,11 +476,15 @@ function ns.CreateMainElements(self)
         CreateAuras(self)
         CreatePowerBar(self)
 
-        self.Health:SetPoint('BOTTOMRIGHT',-1,5)
         self.Power:SetPoint('TOPLEFT',self.Health,'BOTTOMLEFT',0,-1)
         self.Power:SetPoint('TOPRIGHT',self.Health,'BOTTOMRIGHT')
         self.Power:SetPoint('BOTTOMRIGHT',-1,1)
+
+        -- set initial health bottom right point
+        Frame_Power_MinMaxChanged(self)
     end
+
+    AttachEvents(self)
 end
 ------------------------------------------------------------------ frame init --
 function ns.InitFrame(self)
