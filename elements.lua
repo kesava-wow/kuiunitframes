@@ -18,7 +18,7 @@ local auras_SelfSort = function(a,b)
     end
 end
 local auras_PreShowButton = function(self,button)
-    button.own = select(8, UnitAura(self.frame.unit, button.index, self.filter))
+    button.own = select(7, UnitAura(self.frame.unit, button.index, self.filter))
     button.own = button.own == 'player'
 
     -- desaturate other buffs on friendlies, or other debuffs on enemies
