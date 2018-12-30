@@ -64,7 +64,7 @@ local function CreateStatusBarSpark(bar,no_fade)
     local texture = bar:GetStatusBarTexture()
     local spark = bar:CreateTexture(nil,'OVERLAY')
     spark:SetTexture('Interface\\AddOns\\Kui_Media\\t\\spark')
-    spark:SetWidth(8)
+    spark:SetWidth(12)
 
     if bar:GetReverseFill() then
         spark:SetPoint('TOP', texture, 'TOPLEFT', 1, 4)
