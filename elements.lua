@@ -9,6 +9,9 @@ local addon,ns=...
 local oUF = oUF
 local kui = LibStub('Kui-1.0')
 
+local T_SHADOW = 'interface/addons/kui_unitframes/media/edgefile-glow-sd'
+local T_SOLID = 'interface/buttons/white8x8'
+
 -- sort own auras first, then sort by index
 local auras_SelfSort = function(a,b)
     if (a.own and b.own) or (not a.own and not b.own) then
@@ -136,15 +139,15 @@ local function CreateBackground(self,frame,glow)
 
     local edgeFile, edgeSize
     if glow then
-        edgeFile = kui.m.t.shadow
+        edgeFile = T_SHADOW
         edgeSize = 5
     else
-        edgeFile = kui.m.t.solid
+        edgeFile = T_SOLID
         edgeSize = 1
     end
 
     frame:SetBackdrop({
-        bgFile   = kui.m.t.solid,
+        bgFile   = T_SOLID,
         edgeFile = edgeFile,
         edgeSize = edgeSize,
         insets   = {top=edgeSize,bottom=edgeSize,left=edgeSize,right=edgeSize}
@@ -275,7 +278,7 @@ local function CreateCastBar(self)
         icon:SetTexCoord(.1,.9,.1,.9)
 
         icon.bg = bar:CreateTexture(nil, 'BACKGROUND')
-        icon.bg:SetTexture(kui.m.t.solid)
+        icon.bg:SetTexture(T_SOLID)
         icon.bg:SetVertexColor(0, 0, 0)
         icon.bg:SetPoint('TOPLEFT', icon, 'TOPLEFT', -1, 1)
         icon.bg:SetPoint('BOTTOMRIGHT', icon, 'BOTTOMRIGHT', 1, -1)
@@ -372,7 +375,7 @@ local function CreateGlow(self)
     glow:SetPoint('TOPLEFT', -5, 5)
     glow:SetPoint('BOTTOMRIGHT', 5, -5)
     glow:SetBackdrop({
-        edgeFile=kui.m.t.shadow,
+        edgeFile=T_SHADOW,
         edgeSize=5
     })
     glow:SetBackdropBorderColor(0,0,0,.3)
