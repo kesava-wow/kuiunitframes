@@ -206,7 +206,7 @@ local function CreatePortrait(self)
     self.Portrait.shade:SetTexture('Interface\\AddOns\\Kui_Media\\t\\innerShade')
     self.Portrait.shade:SetAllPoints(self)
     self.Portrait.shade:SetBlendMode('BLEND')
-    self.Portrait.shade:SetVertexColor(0,0,0,.8)
+    self.Portrait.shade:SetVertexColor(0,0,0,.5)
 
     self.Health:SetAlpha(.7)
     self.Health:SetFrameLevel(2)
