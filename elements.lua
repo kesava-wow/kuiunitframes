@@ -36,21 +36,35 @@ end
 
 local function FadeSpark(self)
     if self.spark_fade then
-        local min,max = self:GetMinMaxValues()
         local val = self:GetValue()
-        local show_val = (max / 100) * 80
+        local min,max,show_val
+
+        if self.inverted then
+            max,min = self:GetMinMaxValues()
+            show_val = min*.2
+        else
+            min,max = self:GetMinMaxValues()
+            show_val = max*.8
+        end
+
         if val == max then
             self.text:SetAlpha(0)
             self.spark:SetAlpha(0)
             return
-        elseif val < show_val then
+        elseif (self.inverted and val > show_val) or
+               (not self.inverted and val < show_val)
+        then
             self.text:SetAlpha(1)
 
-            if val == 0 then
+            if val == min then
                 self.spark:SetAlpha(0)
             else
                 self.spark:SetAlpha(1)
             end
+        elseif self.inverted then
+            local alpha = (val / show_val)
+            self.text:SetAlpha(alpha)
+            self.spark:SetAlpha(alpha)
         else
             -- fade text and spark depending on value
             local alpha = 1 - ((val - show_val) / (max - show_val))
@@ -442,6 +456,9 @@ local function CreatePlayerElements(self)
         height = 6,
         point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
     }
+
+    -- invert health fill
+    self.Health.inverted = false
 end
 function ns.CreateMainElements(self)
     -- create overlay for text/high textures
