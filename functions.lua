@@ -11,8 +11,8 @@ local kui = LibStub('Kui-1.0')
 -------------------------------------------------------------------- geometry --
 do
     local styles = { -- sizes
-        ['player'] = { 197, 16 },
-        ['target'] = { 197, 25 },
+        ['player'] = { 221, 24 },
+        ['target'] = { 220, 24 },
         ['targettarget'] = { 100, 16 },
         ['player_castbar'] = { 168, 24 },
         ['target_castbar'] = { 215, 24 },
@@ -20,9 +20,9 @@ do
         ['focus_castbar'] = { 98, 30 },
     }
     local geometry = { -- positions
-        ['player'] = { 'player', { 'TOPRIGHT', ActionButton7, 'BOTTOMLEFT', -1.1, 16.1 }},
-        ['player_power'] = { 'player', { 'TOPLEFT', ActionButton12, 'BOTTOMRIGHT', 1.1, 16.1 }},
-        ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', -.1, 1.1 }},
+        ['player'] = { 'player', { 'BOTTOMLEFT', MultiBarBottomRightButton1, 'TOPLEFT', -.1, 1 }},
+        ['player_power'] = { 'player', { 'BOTTOMLEFT', MultiBarBottomLeftButton1, 'TOPLEFT', .1, 1 }},
+        ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', .1, 1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
         ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -222 } },
         ['target_castbar'] = { 'target_castbar', { 'CENTER', UIParent, -13, -190 } },

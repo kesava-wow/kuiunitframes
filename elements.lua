@@ -452,9 +452,9 @@ local function CreatePlayerElements(self)
     -- class bars container
     self.ClassBars = {
         class = select(2,UnitClass('PLAYER')),
-        width = 197,
-        height = 6,
-        point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', 0, -1 }
+        width = 220,
+        height = 8,
+        point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', .1, -1 }
     }
 
     -- invert health fill
