@@ -189,6 +189,9 @@ local function CreateHealthBar(self)
     if self.unit == 'player' then
         -- also make spark
         CreateStatusBarSpark(self.Health)
+
+        -- invert health fill
+        --self.Health.inverted = true
     else
         self.Health.colorReaction = true
         self.Health.colorClass = true
@@ -200,7 +203,8 @@ end
 local function CreatePortrait(self)
     self.Portrait = CreateFrame('PlayerModel',nil,self)
     self.Portrait.type = '3D'
-    self.Portrait:SetAllPoints(self.Health)
+    self.Portrait:SetPoint('TOPLEFT',self.Health)
+    self.Portrait:SetPoint('BOTTOMRIGHT',self.Health,0,.1)
 
     self.Portrait.shade = self.Portrait:CreateTexture(nil,'OVERLAY')
     self.Portrait.shade:SetTexture('Interface\\AddOns\\Kui_Media\\t\\innerShade')
@@ -452,13 +456,10 @@ local function CreatePlayerElements(self)
     -- class bars container
     self.ClassBars = {
         class = select(2,UnitClass('PLAYER')),
-        width = 220,
+        width = 221,
         height = 8,
         point = { 'TOPLEFT', ActionButton7, 'BOTTOMLEFT', .1, -1 }
     }
-
-    -- invert health fill
-    self.Health.inverted = false
 end
 function ns.CreateMainElements(self)
     -- create overlay for text/high textures
