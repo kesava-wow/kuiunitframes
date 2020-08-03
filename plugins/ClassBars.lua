@@ -583,6 +583,10 @@ local function Enable(self, unit)
             [2] = Enum.PowerType.Chi,
             [3] = Enum.PowerType.Chi
         }
+    elseif cb.class == 'PALADIN' then
+        cb.PowerTypes = {
+            [3] = Enum.PowerType.HolyPower
+        }
     end
 
     -- create container
@@ -652,10 +656,12 @@ local function Enable(self, unit)
         cb.o.tooltip = ShamanTooltip
 ----------------------------------------------------------- Create holy power --
     elseif cb.class == 'PALADIN' then
-        cb.type = Enum.PowerType.HolyPower
-        cb.o.colour = { 1, 1, 0 }
-
-        cb.o.update = { ['f'] = UpdateGeneric }
+        cb.types = {
+            [Enum.PowerType.HolyPower] = {
+                colour = { 1,1,0 },
+                update = { ['f'] = UpdateGeneric },
+            },
+        }
 ------------------------------------------------------- Create warlock powers --
     elseif cb.class == 'WARLOCK' then
         cb.level = 10
