@@ -22,6 +22,8 @@ do
     local geometry = { -- positions
         ['player'] = { 'player', { 'BOTTOMLEFT', MultiBarBottomRightButton1, 'TOPLEFT', 0, 1 }},
         ['player_power'] = { 'player', { 'BOTTOMLEFT', MultiBarBottomLeftButton1, 'TOPLEFT', 0, 1 }},
+        --['player'] = { 'player', { 'TOPLEFT', MultiBarBottomRightButton7, 'BOTTOMLEFT', 0, -1 }},
+        --['player_power'] = { 'player', { 'TOPLEFT', MultiBarBottomLeftButton7, 'BOTTOMLEFT', 0, -1 }},
         ['target'] = { 'target', { 'BOTTOMLEFT', ActionButton1, 'TOPLEFT', 0, 1 }},
         ['targettarget'] = { 'targettarget', { 'BOTTOM', 'oUF_KuitwoMainTarget', 'TOP', 0, 10 }},
         ['player_castbar'] = { 'player_castbar', { 'CENTER', UIParent, 13, -222 } },

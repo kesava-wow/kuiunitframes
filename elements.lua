@@ -441,8 +441,8 @@ local function CreateAuras(self)
         size = 15,
         x_spacing = -1,
         y_spacing = 1,
-        x_offset = -16,
-        y_offset = -16,
+        x_offset = -35,
+        y_offset = 17,
         rows = 2,
         sort = auras_SelfSort,
         PreShowButton = auras_PreShowButton
@@ -457,8 +457,8 @@ local function CreateAuras(self)
         size = 15,
         x_spacing = 1,
         y_spacing = 1,
-        x_offset = 16,
-        y_offset = -16,
+        x_offset = 35,
+        y_offset = 17,
         rows = 2,
         sort = auras_SelfSort,
         PreShowButton = auras_PreShowButton
