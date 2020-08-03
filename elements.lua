@@ -48,28 +48,35 @@ local function FadeSpark(self)
         end
 
         if val == max then
-            self.text:SetAlpha(0)
             self.spark:SetAlpha(0)
+            if self.text then
+                self.text:SetAlpha(0)
+            end
             return
         elseif (self.inverted and val > show_val) or
                (not self.inverted and val < show_val)
         then
-            self.text:SetAlpha(1)
-
             if val == min then
                 self.spark:SetAlpha(0)
             else
                 self.spark:SetAlpha(1)
             end
+            if self.text then
+                self.text:SetAlpha(1)
+            end
         elseif self.inverted then
             local alpha = (val / show_val)
-            self.text:SetAlpha(alpha)
             self.spark:SetAlpha(alpha)
+            if self.text then
+                self.text:SetAlpha(alpha)
+            end
         else
             -- fade text and spark depending on value
             local alpha = 1 - ((val - show_val) / (max - show_val))
-            self.text:SetAlpha(alpha)
             self.spark:SetAlpha(alpha)
+            if self.text then
+                self.text:SetAlpha(alpha)
+            end
         end
     end
 
@@ -343,10 +350,10 @@ local function CreatePowerBar(self,reverse)
 
         self:Tag(pp,'[kui:pp]')
         self.Power.text = pp
-
-        -- add spark
-        CreateStatusBarSpark(self.Power)
     end
+
+    CreateStatusBarSpark(self.Power)
+    CreatePowerPrediction(self,reverse)
 end
 ------------------------------------------------------------------------ text --
 local function CreateHealthText(self)
