@@ -269,6 +269,28 @@ local function CreateHealthPrediction(self)
         frequentUpdates = true
     }
 end
+-- power prediction ############################################################
+local function CreatePowerPrediction(self,reverse)
+    assert(self.Power)
+    local texture = 'Interface\\AddOns\\Kui_Media\\t\\bar'
+    local myBar = CreateFrame('StatusBar', nil, self.Power)
+    myBar:SetStatusBarTexture(texture)
+    myBar:GetStatusBarTexture():SetDrawLayer('BACKGROUND',2)
+    myBar:SetPoint('TOP')
+    myBar:SetPoint('BOTTOM')
+    myBar:SetPoint(reverse and 'LEFT' or 'RIGHT',self.Power:GetStatusBarTexture())
+    myBar:SetReverseFill(not reverse)
+    myBar:SetStatusBarColor(1,1,1,.3)
+
+    self.Power:HookScript('OnSizeChanged',function(bar,width)
+        -- as above, set width dynamically
+        myBar:SetWidth(width)
+    end)
+
+    self.PowerPrediction = {
+        mainBar = myBar,
+    }
+end
 -------------------------------------------------------------------- cast bar --
 local function CreateCastBar(self)
     local bar = ns.CreateStatusBar(self,self.unit=='target')
